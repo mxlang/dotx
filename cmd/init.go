@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -20,7 +21,7 @@ var (
 )
 
 func initialize(cmd *cobra.Command, args []string) {
-	dir := os.ExpandEnv(dotfilesDir)
+	dir := os.ExpandEnv(viper.GetString("dir"))
 
 	info, err := os.Stat(dir)
 	if err == nil {

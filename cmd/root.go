@@ -1,21 +1,17 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	configFile  string
-	dotfilesDir string
-
-	rootCmd = &cobra.Command{
-		Use:   "dotx",
-		Short: "The next generation dotfile manager",
-	}
-)
+var rootCmd = &cobra.Command{
+	Use:   "dotx",
+	Short: "The next generation dotfile manager",
+}
 
 func Execute() {
 	err := rootCmd.Execute()
@@ -27,26 +23,20 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "", "config file (default $HOME/.dotx.toml)")
-	rootCmd.PersistentFlags().StringVarP(&dotfilesDir, "dir", "d", "$HOME/.dotfiles", "dotfiles directory")
-
+	rootCmd.PersistentFlags().StringP("dir", "d", "$HOME/.dotfiles", "dotfiles directory")
 	viper.BindPFlag("dir", rootCmd.PersistentFlags().Lookup("dir"))
 }
 
 func initConfig() {
-	if configFile != "" {
-		viper.SetConfigFile(configFile)
-	} else {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
+	viper.SetConfigType("toml")
+	viper.SetConfigName(".dotx")
 
-		viper.AddConfigPath(home)
-
-		viper.SetConfigType("toml")
-		viper.SetConfigName(".dotx")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	viper.AutomaticEnv()
+	viper.AddConfigPath(home)
 
 	viper.ReadInConfig()
 }
