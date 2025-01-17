@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/mlang97/dotx/file"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -14,7 +15,7 @@ var (
 
 	initCmd = &cobra.Command{
 		Use:   "init",
-		Short: "A brief description of your command",
+		Short: "Initialize empty git repo or clone remote one",
 
 		Run: initialize,
 	}
@@ -22,12 +23,8 @@ var (
 
 func initialize(cmd *cobra.Command, args []string) {
 	dir := os.ExpandEnv(viper.GetString("dir"))
-
-	info, err := os.Stat(dir)
-	if err == nil {
-		if info.IsDir() {
-			log.Fatal("dotfiles repository already initialized")
-		}
+	if file.IsDir(dir) {
+		log.Fatal("dotfiles directory does not exist")
 	}
 
 	if remoteRepo != "" {
