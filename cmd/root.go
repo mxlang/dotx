@@ -34,7 +34,9 @@ func newCmdRoot(config *config.Config) *cobra.Command {
 	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 	viper.BindPFlag("dir", rootCmd.PersistentFlags().Lookup("dir"))
 
-	rootCmd.AddCommand(newCmdInit(config))
+	rootCmd.AddCommand(
+		newCmdInit(config),
+		newCmdAdd(config))
 
 	return rootCmd
 }
