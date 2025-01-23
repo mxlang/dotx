@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	config.LoadConfig()
+	config := config.LoadConfig()
 
-	cmd.Execute()
+	cmd.Execute(config)
 }

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -8,12 +9,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-func LoadConfig() {
+type Config struct {
+	Verbose     bool
+	DotfilesDir string
+}
+
+var config *Config
+
+func LoadConfig() *Config {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		slog.Error("failed to determine user home directory", "error", err)
 		os.Exit(1)
 	}
+
+	config = &Config{}
 
 	viper.SetConfigType("yaml")
 
@@ -23,7 +33,7 @@ func LoadConfig() {
 	viper.AddConfigPath(configPath)
 	if err := viper.ReadInConfig(); err == nil {
 		slog.Debug("loaded config file", "config", filepath.Join(configPath, "config.yaml"))
-		return
+		return config
 	}
 	slog.Debug("config file not found", "config", filepath.Join(configPath, "config.yaml"))
 
@@ -32,7 +42,13 @@ func LoadConfig() {
 	viper.AddConfigPath(home)
 	if err := viper.ReadInConfig(); err == nil {
 		slog.Debug("loaded fallback config file", "config", filepath.Join(home, ".dotx.yaml"))
-		return
+		return config
 	}
 	slog.Debug("fallback config file not found", "config", filepath.Join(home, ".dotx.yaml"))
+
+	if err := viper.Unmarshal(config); err != nil {
+		log.Fatal(err)
+	}
+
+	return config
 }

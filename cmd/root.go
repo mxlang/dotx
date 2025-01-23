@@ -4,18 +4,19 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/mlang97/dotx/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-func Execute() {
-	err := newCmdRoot().Execute()
+func Execute(cfg *config.Config) {
+	err := newCmdRoot(cfg).Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
-func newCmdRoot() *cobra.Command {
+func newCmdRoot(config *config.Config) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "dotx",
 		Short: "The next generation dotfile manager",
@@ -27,13 +28,13 @@ func newCmdRoot() *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "more verbose output")
-	rootCmd.PersistentFlags().StringP("dir", "d", "$HOME/.dotfiles", "dotfiles directory on your machine")
+	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "more verbose output")
+	rootCmd.PersistentFlags().StringVarP(&config.DotfilesDir, "dir", "d", "$HOME/.dotfiles", "dotfiles directory on your machine")
 
 	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 	viper.BindPFlag("dir", rootCmd.PersistentFlags().Lookup("dir"))
 
-	rootCmd.AddCommand(newInitCmd())
+	rootCmd.AddCommand(newCmdInit(config))
 
 	return rootCmd
 }
