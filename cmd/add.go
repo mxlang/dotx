@@ -16,7 +16,11 @@ func newCmdAdd(cfg config.Config) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return cfg.CheckDotfilesDir()
+			if err := cfg.CheckDotfilesDir(); err != nil {
+				return err
+			}
+			cfg.EnsureRepoConfig()
+			return nil
 		},
 
 		Run: func(cmd *cobra.Command, args []string) {

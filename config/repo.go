@@ -22,8 +22,6 @@ type Dotfile struct {
 }
 
 func (r repoConfig) AddDotfile(destPath string, sourcePath string) {
-	ensureRepoConfig()
-
 	home, err := os.UserHomeDir()
 	if err != nil {
 		slog.Error("failed to determine user home directory", "error", err)
@@ -47,7 +45,7 @@ func (r repoConfig) AddDotfile(destPath string, sourcePath string) {
 	}
 }
 
-func ensureRepoConfig() {
+func (r repoConfig) EnsureRepoConfig() {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		slog.Error("failed to determine user home directory", "error", err)
