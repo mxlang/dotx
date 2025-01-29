@@ -18,13 +18,16 @@ func newCmdRoot(dotx app.App) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "dotx",
 		Short: "The next generation dotfile manager",
+		Args:  cobra.NoArgs,
 
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			dotx.EnsureRepo()
 		},
 	}
 
-	rootCmd.AddCommand(newCmdAdd(dotx))
+	rootCmd.AddCommand(
+		newCmdAdd(dotx),
+		newCmdDeploy(dotx))
 
 	return rootCmd
 }
