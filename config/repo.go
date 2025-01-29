@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var repoConfigLoader *viper.Viper
+
 type RepoConfig struct {
 	Dotfiles []Dotfile
 }
@@ -19,28 +21,36 @@ type Dotfile struct {
 	Destination string
 }
 
-func FromRepoFile() RepoConfig {
+func FromRepoFile(appConfig AppConfig) RepoConfig {
 	config := RepoConfig{}
 
-	viper.SetConfigName("dotx")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("$HOME/.dotfiles")
+	repoConfigLoader.SetConfigName("dotx")
+	repoConfigLoader.SetConfigType("yaml")
+	repoConfigLoader.AddConfigPath(appConfig.GetRepoDir())
 
-	viper.ReadInConfig()
-	viper.Unmarshal(&config)
+	repoConfigLoader.ReadInConfig()
+	repoConfigLoader.Unmarshal(&config)
 
 	return config
 }
 
 func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
-	ensureRepoConfigFile()
+	home, _ := os.UserHomeDir()
+	repoConfigFile := filepath.Join(home, ".dotfiles", "dotx.yaml")
+
+	if _, err := os.Stat(repoConfigFile); err != nil {
+		if _, err := os.Create(repoConfigFile); err != nil {
+			return err
+		}
+	}
+
 	if slices.Contains(r.Dotfiles, dotfile) {
 		return errors.New("dotfile already added")
 	}
 
-	viper.Set("dotfiles", append(r.Dotfiles, dotfile))
+	repoConfigLoader.Set("dotfiles", append(r.Dotfiles, dotfile))
 
-	if err := viper.WriteConfig(); err != nil {
+	if err := repoConfigLoader.WriteConfig(); err != nil {
 		return errors.New("failed to write repo config")
 	}
 
@@ -56,4 +66,8 @@ func ensureRepoConfigFile() {
 			log.Fatal(err)
 		}
 	}
+}
+
+func init() {
+	repoConfigLoader = viper.New()
 }

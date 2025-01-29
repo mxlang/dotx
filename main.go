@@ -12,7 +12,7 @@ func main() {
 	logger := logger.New()
 	fs := fs.New()
 	appConfig := config.FromAppFile()
-	rempoConfig := config.FromRepoFile()
+	rempoConfig := config.FromRepoFile(appConfig)
 
 	dotx := app.New(logger, fs, appConfig, rempoConfig)
 

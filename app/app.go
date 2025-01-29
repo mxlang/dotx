@@ -1,15 +1,14 @@
 package app
 
 import (
-	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/charmbracelet/log"
 	"github.com/mlang97/dotx/config"
 	"github.com/mlang97/dotx/fs"
 )
-
-const repoDir = ".dotfiles"
 
 type App struct {
 	Logger *log.Logger
@@ -29,15 +28,12 @@ func New(logger *log.Logger, fs fs.Filesystem, appConfig config.AppConfig, repoC
 }
 
 func (a App) EnsureRepo() error {
-	return a.fs.Mkdir(a.appConfig.RepoDir)
+	return a.fs.Mkdir(a.appConfig.GetRepoDir())
 }
 
 func (a App) AddDotfile(path string) {
 	sourcePath, _ := a.fs.AbsPath(path)
-	destinationPath := filepath.Join(a.appConfig.RepoDir, filepath.Base(path))
-
-	fmt.Println(sourcePath)
-	fmt.Println(destinationPath)
+	destinationPath := filepath.Join(a.appConfig.GetRepoDir(), filepath.Base(path))
 
 	if err := a.fs.Move(sourcePath, destinationPath); err != nil {
 		a.Logger.Fatal(err)
@@ -46,6 +42,11 @@ func (a App) AddDotfile(path string) {
 	if err := a.fs.Symlink(destinationPath, sourcePath); err != nil {
 		a.Logger.Fatal(err)
 	}
+
+	// normalize paths
+	home, _ := os.UserHomeDir()
+	sourcePath = strings.Replace(sourcePath, home, "$HOME", 1)
+	destinationPath = strings.Replace(destinationPath, a.appConfig.GetRepoDir()+"/", "", 1)
 
 	dotfile := config.Dotfile{
 		Source:      sourcePath,

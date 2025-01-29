@@ -12,13 +12,12 @@ type AppConfig struct {
 	RepoDir string
 }
 
-func FromAppFile() AppConfig {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		slog.Error("failed to determine user home directory", "error", err)
-		os.Exit(1)
-	}
+func (a AppConfig) GetRepoDir() string {
+	return os.ExpandEnv(a.RepoDir)
+}
 
+func FromAppFile() AppConfig {
+	home, _ := os.UserHomeDir()
 	config := AppConfig{
 		RepoDir: filepath.Join(home, ".dotfiles"),
 	}
