@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"log"
 	"os"
 	"path/filepath"
 	"slices"
@@ -13,6 +12,8 @@ import (
 var repoConfigLoader *viper.Viper
 
 type RepoConfig struct {
+	appConfig AppConfig
+
 	Dotfiles []Dotfile
 }
 
@@ -22,7 +23,9 @@ type Dotfile struct {
 }
 
 func FromRepoFile(appConfig AppConfig) RepoConfig {
-	config := RepoConfig{}
+	config := RepoConfig{
+		appConfig: appConfig,
+	}
 
 	repoConfigLoader.SetConfigName("dotx")
 	repoConfigLoader.SetConfigType("yaml")
@@ -34,9 +37,18 @@ func FromRepoFile(appConfig AppConfig) RepoConfig {
 	return config
 }
 
+func (r RepoConfig) GetDotfile(file string) Dotfile {
+	for _, df := range r.Dotfiles {
+		if df.Source == file {
+			return df
+		}
+	}
+
+	return Dotfile{}
+}
+
 func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
-	home, _ := os.UserHomeDir()
-	repoConfigFile := filepath.Join(home, ".dotfiles", "dotx.yaml")
+	repoConfigFile := filepath.Join(r.appConfig.GetRepoDir(), "dotx.yaml")
 
 	if _, err := os.Stat(repoConfigFile); err != nil {
 		if _, err := os.Create(repoConfigFile); err != nil {
@@ -55,17 +67,6 @@ func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
 	}
 
 	return nil
-}
-
-func ensureRepoConfigFile() {
-	home, _ := os.UserHomeDir()
-	repoConfigFile := filepath.Join(home, ".dotfiles", "dotx.yaml")
-
-	if _, err := os.Stat(repoConfigFile); err != nil {
-		if _, err := os.Create(repoConfigFile); err != nil {
-			log.Fatal(err)
-		}
-	}
 }
 
 func init() {

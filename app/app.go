@@ -32,8 +32,14 @@ func (a App) EnsureRepo() error {
 }
 
 func (a App) AddDotfile(path string) {
+	fileName := filepath.Base(path)
+
+	if a.repoConfig.GetDotfile(fileName) != (config.Dotfile{}) {
+		a.Logger.Fatal("dotfile already exist")
+	}
+
 	sourcePath, _ := a.fs.AbsPath(path)
-	destinationPath := filepath.Join(a.appConfig.GetRepoDir(), filepath.Base(path))
+	destinationPath := filepath.Join(a.appConfig.GetRepoDir(), fileName)
 
 	if err := a.fs.Move(sourcePath, destinationPath); err != nil {
 		a.Logger.Fatal(err)
@@ -46,11 +52,10 @@ func (a App) AddDotfile(path string) {
 	// normalize paths
 	home, _ := os.UserHomeDir()
 	sourcePath = strings.Replace(sourcePath, home, "$HOME", 1)
-	destinationPath = strings.Replace(destinationPath, a.appConfig.GetRepoDir()+"/", "", 1)
 
 	dotfile := config.Dotfile{
-		Source:      sourcePath,
-		Destination: destinationPath,
+		Source:      fileName,
+		Destination: sourcePath,
 	}
 
 	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
