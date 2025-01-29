@@ -6,35 +6,24 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 
+	"github.com/mlang97/dotx/dotfile"
 	"github.com/spf13/viper"
 )
 
 var repoConfigLoader *viper.Viper
 
 type repoConfig struct {
-	appConfig appConfig
-
-	Dotfiles []Dotfile
+	Dotfiles []dotfile.Dotfile
 }
 
-func (r repoConfig) AddDotfile(path string) error {
-	dotfile, err := New(r.appConfig, path)
-	if err != nil {
-		return err
+func (r repoConfig) AddDotfile(dotfile dotfile.Dotfile) error {
+	if slices.Contains(r.Dotfiles, dotfile) {
+		return errors.New("dotfile already added")
 	}
 
-	if err := dotfile.move(); err != nil {
-		return err
-	}
-
-	if err := dotfile.symlink(); err != nil {
-		return err
-	}
-
-	r.Dotfiles = append(r.Dotfiles, dotfile)
-
-	repoConfigLoader.Set("dotfiles", r.Dotfiles)
+	repoConfigLoader.Set("dotfiles", append(r.Dotfiles, dotfile))
 
 	if err := repoConfigLoader.WriteConfig(); err != nil {
 		return errors.New("failed to write config")
@@ -59,16 +48,14 @@ func (r repoConfig) EnsureRepoConfig() {
 	}
 }
 
-func loadRepoConfig(appConfig appConfig) repoConfig {
+func loadRepoConfig() repoConfig {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		slog.Error("failed to determine user home directory", "error", err)
 		os.Exit(1)
 	}
 
-	config := repoConfig{
-		appConfig: appConfig,
-	}
+	config := repoConfig{}
 
 	repoConfigLoader.SetConfigName("dotx")
 	repoConfigLoader.SetConfigType("yaml")

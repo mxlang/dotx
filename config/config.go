@@ -6,9 +6,8 @@ type Config struct {
 }
 
 func Load() Config {
-	appConfig := loadAppConfig()
 	return Config{
-		appConfig:  appConfig,
-		repoConfig: loadRepoConfig(appConfig),
+		appConfig:  loadAppConfig(),
+		repoConfig: loadRepoConfig(),
 	}
 }
