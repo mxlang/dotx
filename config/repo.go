@@ -1,11 +1,11 @@
 package config
 
 import (
+	"errors"
 	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -13,36 +13,34 @@ import (
 var repoConfigLoader *viper.Viper
 
 type repoConfig struct {
+	appConfig appConfig
+
 	Dotfiles []Dotfile
 }
 
-type Dotfile struct {
-	Destination string
-	Source      string
-}
-
-func (r repoConfig) AddDotfile(destPath string, sourcePath string) {
-	home, err := os.UserHomeDir()
+func (r repoConfig) AddDotfile(path string) error {
+	dotfile, err := New(r.appConfig, path)
 	if err != nil {
-		slog.Error("failed to determine user home directory", "error", err)
-		os.Exit(1)
+		return err
 	}
 
-	// sanitize file paths
-	destPath = strings.Replace(destPath, home, "$HOME", 1)
-	sourcePath = strings.Replace(sourcePath, home+"/.dotfiles/", "", 1)
-
-	file := Dotfile{
-		Destination: destPath,
-		Source:      sourcePath,
+	if err := dotfile.move(); err != nil {
+		return err
 	}
-	r.Dotfiles = append(r.Dotfiles, file)
+
+	if err := dotfile.symlink(); err != nil {
+		return err
+	}
+
+	r.Dotfiles = append(r.Dotfiles, dotfile)
 
 	repoConfigLoader.Set("dotfiles", r.Dotfiles)
 
 	if err := repoConfigLoader.WriteConfig(); err != nil {
-		log.Fatal(err)
+		return errors.New("failed to write config")
 	}
+
+	return nil
 }
 
 func (r repoConfig) EnsureRepoConfig() {
@@ -61,14 +59,16 @@ func (r repoConfig) EnsureRepoConfig() {
 	}
 }
 
-func loadRepoConfig() repoConfig {
+func loadRepoConfig(appConfig appConfig) repoConfig {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		slog.Error("failed to determine user home directory", "error", err)
 		os.Exit(1)
 	}
 
-	config := repoConfig{}
+	config := repoConfig{
+		appConfig: appConfig,
+	}
 
 	repoConfigLoader.SetConfigName("dotx")
 	repoConfigLoader.SetConfigType("yaml")
