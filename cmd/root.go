@@ -3,40 +3,28 @@ package cmd
 import (
 	"os"
 
-	"github.com/mlang97/dotx/config"
+	"github.com/mlang97/dotx/app"
 	"github.com/spf13/cobra"
 )
 
-func Execute() {
-	cfg := config.Load()
-
-	err := newCmdRoot(cfg).Execute()
+func Execute(dotx app.App) {
+	err := newCmdRoot(dotx).Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
-func newCmdRoot(cfg config.Config) *cobra.Command {
+func newCmdRoot(dotx app.App) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "dotx",
 		Short: "The next generation dotfile manager",
 
-		// PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// 	if viper.GetBool("verbose") {
-		// 		slog.SetLogLoggerLevel(slog.LevelDebug)
-		// 	}
-		// },
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			dotx.EnsureRepo()
+		},
 	}
 
-	// rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "more verbose output")
-	// rootCmd.PersistentFlags().StringVarP(&config.DotfilesDir, "dir", "d", "$HOME/.dotfiles", "dotfiles directory on your machine")
-
-	// viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
-	// viper.BindPFlag("dir", rootCmd.PersistentFlags().Lookup("dir"))
-
-	rootCmd.AddCommand(
-		newCmdInit(cfg),
-		newCmdAdd(cfg))
+	rootCmd.AddCommand(newCmdAdd(dotx))
 
 	return rootCmd
 }

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -9,32 +8,19 @@ import (
 	"github.com/spf13/viper"
 )
 
-type appConfig struct {
-	Verbose     bool
-	DotfilesDir string
+type AppConfig struct {
+	RepoDir string
 }
 
-func (a appConfig) CheckDotfilesDir() error {
-	fileInfo, err := os.Stat(a.DotfilesDir)
-	if err == nil {
-		if fileInfo.IsDir() {
-			return nil
-		}
-	}
-
-	return errors.New("dotfiles dir does not exist")
-}
-
-func loadAppConfig() appConfig {
+func FromAppFile() AppConfig {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		slog.Error("failed to determine user home directory", "error", err)
 		os.Exit(1)
 	}
 
-	config := appConfig{
-		Verbose:     false,
-		DotfilesDir: filepath.Join(home, ".dotfiles"),
+	config := AppConfig{
+		RepoDir: filepath.Join(home, ".dotfiles"),
 	}
 
 	appConfigLoader := viper.New()
