@@ -5,20 +5,20 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/charmbracelet/log"
 	"github.com/mlang97/dotx/config"
 	"github.com/mlang97/dotx/fs"
+	"github.com/mlang97/dotx/log"
 )
 
 type App struct {
-	Logger *log.Logger
+	Logger log.Logger
 	fs     fs.Filesystem
 
 	appConfig  config.AppConfig
 	repoConfig config.RepoConfig
 }
 
-func New(logger *log.Logger, fs fs.Filesystem, appConfig config.AppConfig, repoConfig config.RepoConfig) App {
+func New(logger log.Logger, fs fs.Filesystem, appConfig config.AppConfig, repoConfig config.RepoConfig) App {
 	return App{
 		Logger:     logger,
 		fs:         fs,
@@ -33,20 +33,19 @@ func (a App) EnsureRepo() error {
 
 func (a App) AddDotfile(path string) {
 	fileName := filepath.Base(path)
-
 	if a.repoConfig.GetDotfile(fileName) != (config.Dotfile{}) {
-		a.Logger.Fatal("dotfile already exist")
+		a.Logger.Error("dotfile already exist")
 	}
 
 	sourcePath, _ := a.fs.AbsPath(path)
 	destinationPath := filepath.Join(a.appConfig.GetRepoDir(), fileName)
 
 	if err := a.fs.Move(sourcePath, destinationPath); err != nil {
-		a.Logger.Fatal(err)
+		a.Logger.Error(err)
 	}
 
 	if err := a.fs.Symlink(destinationPath, sourcePath); err != nil {
-		a.Logger.Fatal(err)
+		a.Logger.Error(err)
 	}
 
 	// normalize paths
@@ -59,6 +58,6 @@ func (a App) AddDotfile(path string) {
 	}
 
 	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
-		a.Logger.Fatal(err)
+		a.Logger.Error(err)
 	}
 }
