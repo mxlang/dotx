@@ -54,5 +54,5 @@ func (fs RepoFs) Symlink(sourcePath string, destinationPath string) error {
 }
 
 func (fs RepoFs) Mkdir(path string) error {
-	return os.Mkdir(path, 0777)
+	return os.MkdirAll(path, 0777)
 }
