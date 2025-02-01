@@ -12,10 +12,6 @@ type AppConfig struct {
 	RepoDir string
 }
 
-func (a AppConfig) GetRepoDir() string {
-	return os.ExpandEnv(a.RepoDir)
-}
-
 func FromAppFile() AppConfig {
 	home, _ := os.UserHomeDir()
 	config := AppConfig{

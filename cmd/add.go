@@ -14,7 +14,9 @@ func newCmdAdd(dotx app.App) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
-			dotx.AddDotfile(args[0], optDir)
+			if err := dotx.AddDotfile(args[0], optDir); err != nil {
+				dotx.Logger.Error("failed to add file", "err", err)
+			}
 		},
 	}
 
