@@ -83,6 +83,8 @@ func (a App) DeployDotfiles() error {
 		sourcePath := filepath.Join(a.appConfig.RepoDir, dotfile.Source)
 		destPath := os.ExpandEnv(dotfile.Destination)
 
+		// TODO check if file is already deployed from dotx
+
 		_, err := os.Stat(destPath)
 		if err == nil {
 			reader := bufio.NewReader(os.Stdin)

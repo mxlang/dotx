@@ -15,6 +15,8 @@ func newCmdDeploy(dotx app.App) *cobra.Command {
 			if err := dotx.DeployDotfiles(); err != nil {
 				dotx.Logger.Error("failed to deploy your dotfiles", "err", err)
 			}
+
+			dotx.Logger.Info("successfully deployed your dotfiles")
 		},
 	}
 }

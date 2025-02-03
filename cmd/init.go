@@ -16,6 +16,8 @@ func newCmdInit(dotx app.App) *cobra.Command {
 				dotx.Logger.Error("failed to init remote repo", "error", err)
 			}
 
+			// TODO create .gitignore if not exists and add backup folder to it
+
 			dotx.Logger.Info("successfully init remote repo")
 		},
 	}
