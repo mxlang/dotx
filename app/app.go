@@ -83,10 +83,14 @@ func (a App) DeployDotfiles() error {
 		sourcePath := filepath.Join(a.appConfig.RepoDir, dotfile.Source)
 		destPath := os.ExpandEnv(dotfile.Destination)
 
-		// TODO check if file is already deployed from dotx
-
 		_, err := os.Stat(destPath)
 		if err == nil {
+			symlinkPath, err := a.fs.SymlinkPath(destPath)
+			if err == nil && sourcePath == symlinkPath {
+				a.Logger.Warn("file already deployed from dotx")
+				continue
+			}
+
 			reader := bufio.NewReader(os.Stdin)
 			fmt.Print("Dotfile already exists on your sytem. Do you want to backup and overwrite? (Y/n): ")
 			char, _, err := reader.ReadRune()
