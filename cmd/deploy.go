@@ -8,11 +8,13 @@ import (
 func newCmdDeploy(dotx app.App) *cobra.Command {
 	return &cobra.Command{
 		Use:   "deploy",
-		Short: "A brief description of your command",
+		Short: "Deploys your dotfiles on your system",
 		Args:  cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			dotx.DeployDotfiles()
+			if err := dotx.DeployDotfiles(); err != nil {
+				dotx.Logger.Error("failed to deploy your dotfiles", "err", err)
+			}
 		},
 	}
 }

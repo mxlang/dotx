@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
@@ -70,18 +71,40 @@ func (a App) AddDotfile(path string, optDir string) error {
 	}
 
 	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
-		return errors.New("failed to write confi")
+		return errors.New("failed to write config")
 	}
 
 	return nil
 }
 
-func (a App) DeployDotfiles() {
+func (a App) DeployDotfiles() error {
 	for _, dotfile := range a.repoConfig.Dotfiles {
-		fmt.Println(dotfile)
-		source := filepath.Join(a.appConfig.RepoDir, dotfile.Source)
-		dest := os.ExpandEnv(dotfile.Destination)
+		sourcePath := filepath.Join(a.appConfig.RepoDir, dotfile.Source)
+		destPath := os.ExpandEnv(dotfile.Destination)
 
-		a.fs.Symlink(source, dest)
+		_, err := os.Stat(destPath)
+		if err == nil {
+			reader := bufio.NewReader(os.Stdin)
+			fmt.Print("Dotfile already exists on your sytem. Do you want to backup and overwrite? (Y/n): ")
+			char, _, err := reader.ReadRune()
+			if err != nil {
+				return err
+			}
+
+			switch char {
+			case 'y', 'Y', '\n':
+			// TODO move existing file to backup folder
+			case 'n', 'N':
+				continue
+			default:
+				return errors.New("invalid user input")
+			}
+		}
+
+		if err := a.fs.Symlink(sourcePath, destPath); err != nil {
+			return errors.New("failed to symlink file")
+		}
 	}
+
+	return nil
 }

@@ -20,7 +20,7 @@ func newCmdAdd(dotx app.App) *cobra.Command {
 		},
 	}
 
-	addCmd.Flags().StringVarP(&optDir, "dir", "d", "", "test")
+	addCmd.Flags().StringVarP(&optDir, "dir", "d", "", "optional path in dotfiles repo")
 
 	return addCmd
 }
