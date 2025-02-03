@@ -108,6 +108,11 @@ func (a App) DeployDotfiles() error {
 			}
 		}
 
+		dirPath := filepath.Dir(destPath)
+		if err := a.fs.Mkdir(dirPath); err != nil {
+			return errors.New("failed to create dir")
+		}
+
 		if err := a.fs.Symlink(sourcePath, destPath); err != nil {
 			return errors.New("failed to symlink file")
 		}
