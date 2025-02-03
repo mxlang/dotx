@@ -28,6 +28,7 @@ func newCmdRoot(dotx app.App) *cobra.Command {
 	rootCmd.AddCommand(
 		newCmdAdd(dotx),
 		newCmdDeploy(dotx),
+		newCmdSync(dotx),
 	)
 
 	return rootCmd

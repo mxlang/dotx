@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -104,6 +105,15 @@ func (a App) DeployDotfiles() error {
 		if err := a.fs.Symlink(sourcePath, destPath); err != nil {
 			return errors.New("failed to symlink file")
 		}
+	}
+
+	return nil
+}
+
+func (a App) InitializeRemoteRepo(remoteRepo string) error {
+	command := exec.Command("git", "clone", remoteRepo, a.appConfig.RepoDir)
+	if err := command.Run(); err != nil {
+		return errors.New("failed to clone remote repo")
 	}
 
 	return nil
