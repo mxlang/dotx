@@ -4,9 +4,9 @@
 <svg
    version="1.1"
    id="svg1"
-   width="350"
-   height="250"
-   viewBox="0 0 500 500"
+   width="800"
+   height="350"
+   viewBox="0 0 800 350"
    sodipodi:docname="logo.svg"
    inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -83,26 +83,26 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.78808594"
-     inkscape:cx="386.37918"
-     inkscape:cy="163.05328"
+     inkscape:cx="603.36059"
+     inkscape:cy="151.63321"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g1" />
+     inkscape:current-layer="layer2" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Hintergrund"
      style="display:inline;fill:#313244;fill-opacity:1">
     <rect
-       style="fill:#313244;fill-opacity:1;stroke:none;stroke-width:0.475128;stroke-opacity:1"
+       style="fill:#313244;fill-opacity:1;stroke:none;stroke-width:0.499917;stroke-opacity:1"
        id="rect38"
-       width="511.36536"
-       height="513.90332"
-       x="-5.0755854"
-       y="-7.6133823" />
+       width="804.48059"
+       height="361.63565"
+       x="-2.5378137"
+       y="-6.3444986" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -112,7 +112,7 @@
      transform="translate(-7.7916344,37.684323)">
     <g
        id="g35"
-       transform="matrix(0.67276227,0,0,0.64572605,-87.089483,-94.93993)">
+       transform="matrix(0.67276227,0,0,0.64572605,-69.089483,-101.7838)">
       <image
          width="1024"
          height="1024"
@@ -149,14 +149,14 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:96px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#cdd6f4;fill-opacity:1;stroke:none;stroke-width:15.9041;stroke-opacity:1"
-       x="144.62167"
-       y="403.56155"
+       x="522.93463"
+       y="177.41678"
        id="text35"
        transform="scale(1.0308903,0.97003531)"
        inkscape:label="Schrift"><tspan
          sodipodi:role="line"
-         x="144.62167"
-         y="403.56155"
+         x="522.93463"
+         y="177.41678"
          id="tspan37"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:96px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#cdd6f4;fill-opacity:1;stroke-width:15.9041">dotx</tspan></text>
   </g>
