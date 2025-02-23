@@ -17,7 +17,7 @@ type Filesystem interface {
 type Fs struct {
 }
 
-func New() Fs {
+func NewFs() Fs {
 	return Fs{}
 }
 

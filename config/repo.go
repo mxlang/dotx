@@ -37,9 +37,9 @@ func FromRepoFile(appConfig AppConfig) RepoConfig {
 	return config
 }
 
-func (r RepoConfig) GetDotfile(file string) Dotfile {
+func (r RepoConfig) GetDotfile(destPath string) Dotfile {
 	for _, df := range r.Dotfiles {
-		if os.ExpandEnv(df.Destination) == file {
+		if os.ExpandEnv(df.Destination) == destPath {
 			return df
 		}
 	}
@@ -50,6 +50,7 @@ func (r RepoConfig) GetDotfile(file string) Dotfile {
 func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
 	repoConfigFile := filepath.Join(os.ExpandEnv(r.appConfig.RepoDir), "dotx.yaml")
 
+	// create dotx.yaml in repo dir if not exists
 	if _, err := os.Stat(repoConfigFile); err != nil {
 		if _, err := os.Create(repoConfigFile); err != nil {
 			return err

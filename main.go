@@ -10,11 +10,11 @@ import (
 
 func main() {
 	logger := log.New()
-	fs := fs.New()
+	fs := fs.NewFs()
 	appConfig := config.FromAppFile()
-	rempoConfig := config.FromRepoFile(appConfig)
+	repoConfig := config.FromRepoFile(appConfig)
 
-	dotx := app.New(logger, fs, appConfig, rempoConfig)
+	dotx := app.New(logger, fs, appConfig, repoConfig)
 
 	cmd.Execute(dotx)
 }

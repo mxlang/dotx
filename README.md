@@ -9,3 +9,7 @@
         <h3>⚠️🚧 This project is still under development 🚧⚠️<h3>
     </p>
 </div>
+
+## Installation
+
+TBD
