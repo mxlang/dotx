@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/mlang97/dotx/app"
+	"github.com/mlang97/dotx/internal/app"
 	"github.com/spf13/cobra"
 )
 

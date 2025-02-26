@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/mlang97/dotx/app"
 	"github.com/mlang97/dotx/cmd"
-	"github.com/mlang97/dotx/config"
-	"github.com/mlang97/dotx/fs"
-	"github.com/mlang97/dotx/log"
+	"github.com/mlang97/dotx/internal/app"
+	"github.com/mlang97/dotx/internal/config"
+	"github.com/mlang97/dotx/internal/fs"
+	"github.com/mlang97/dotx/internal/log"
 )
 
 func main() {

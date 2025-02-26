@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/mlang97/dotx/app"
+	"github.com/mlang97/dotx/internal/app"
 	"github.com/spf13/cobra"
 )
 
