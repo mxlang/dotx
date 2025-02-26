@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/mlang97/dotx/cmd"
 	"github.com/mlang97/dotx/internal/app"
+	"github.com/mlang97/dotx/internal/cmd"
 	"github.com/mlang97/dotx/internal/config"
 	"github.com/mlang97/dotx/internal/fs"
 	"github.com/mlang97/dotx/internal/log"

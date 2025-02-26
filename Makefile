@@ -1,5 +1,5 @@
 build:
-	@go build -o bin/dotx .
+	@go build -o bin/dotx cmd/dotx/main.go
 
 test:
 	@go test ./...
