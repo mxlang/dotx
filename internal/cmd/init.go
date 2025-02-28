@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/mlang97/dotx/internal/app"
+	"github.com/mlang97/dotx/internal/dotx"
 	"github.com/spf13/cobra"
 )
 
-func newCmdInit(dotx app.App) *cobra.Command {
+func newCmdInit(dotx dotx.App) *cobra.Command {
 	return &cobra.Command{
 		Use:   "init",
 		Short: "Command to handle everything with an remote repo",

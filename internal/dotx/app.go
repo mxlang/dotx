@@ -1,4 +1,4 @@
-package app
+package dotx
 
 import (
 	"bufio"

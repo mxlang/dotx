@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/mlang97/dotx/internal/app"
+	"github.com/mlang97/dotx/internal/dotx"
 	"github.com/spf13/cobra"
 )
 
-func newCmdSync(dotx app.App) *cobra.Command {
+func newCmdSync(dotx dotx.App) *cobra.Command {
 	syncCmd := &cobra.Command{
 		Use:   "sync",
 		Short: "A brief description of your command",

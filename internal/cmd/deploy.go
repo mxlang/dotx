@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/mlang97/dotx/internal/app"
+	"github.com/mlang97/dotx/internal/dotx"
 	"github.com/spf13/cobra"
 )
 
-func newCmdDeploy(dotx app.App) *cobra.Command {
+func newCmdDeploy(dotx dotx.App) *cobra.Command {
 	return &cobra.Command{
 		Use:   "deploy",
 		Short: "Deploys your dotfiles on your system",

@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/mlang97/dotx/internal/app"
+	"github.com/mlang97/dotx/internal/dotx"
 	"github.com/spf13/cobra"
 )
 
-func newCmdAdd(dotx app.App) *cobra.Command {
+func newCmdAdd(dotx dotx.App) *cobra.Command {
 	var optDir string
 
 	addCmd := &cobra.Command{
