@@ -44,11 +44,11 @@ func (a App) AddDotfile(path string) error {
 	}
 
 	if err := a.fs.Move(source, dest); err != nil {
-		return errors.New("failed to move file")
+		return err
 	}
 
-	if err := a.fs.Symlink(source, dest); err != nil {
-		return errors.New("failed to symlink file")
+	if err := a.fs.Symlink(dest, source); err != nil {
+		return err
 	}
 
 	// normalize paths
