@@ -1,13 +1,8 @@
 package dotx
 
 import (
-	"bufio"
 	"errors"
-	"fmt"
-	"os"
 	"os/exec"
-	"path/filepath"
-	"strings"
 
 	"github.com/mlang97/dotx/internal/config"
 	"github.com/mlang97/dotx/internal/fs"
@@ -32,91 +27,92 @@ func New(logger log.Logger, fs fs.Filesystem, appConfig config.AppConfig, repoCo
 }
 
 func (a App) EnsureRepo() error {
-	return a.fs.Mkdir(a.appConfig.RepoDir)
+	dir := fs.NewFile(a.appConfig.RepoDir)
+	return a.fs.Mkdir(dir)
 }
 
 func (a App) AddDotfile(path string, optDir string) error {
-	fileName := filepath.Base(path)
-	sourcePath, _ := a.fs.AbsPath(path)
-	destinationPath := filepath.Join(a.appConfig.RepoDir, fileName)
+	// fileName := filepath.Base(path)
+	// sourcePath, _ := a.fs.AbsPath(path)
+	// destinationPath := filepath.Join(a.appConfig.RepoDir, fileName)
 
-	if a.repoConfig.GetDotfile(sourcePath) != (config.Dotfile{}) {
-		return errors.New("dotfile already exist")
-	}
+	// if a.repoConfig.GetDotfile(sourcePath) != (config.Dotfile{}) {
+	// 	return errors.New("dotfile already exist")
+	// }
 
-	if optDir != "" {
-		dir := filepath.Join(a.appConfig.RepoDir, optDir)
-		if err := a.fs.Mkdir(dir); err != nil {
-			return errors.New("failed to create dir")
-		}
+	// if optDir != "" {
+	// 	dir := filepath.Join(a.appConfig.RepoDir, optDir)
+	// 	if err := a.fs.Mkdir(dir); err != nil {
+	// 		return errors.New("failed to create dir")
+	// 	}
 
-		destinationPath = filepath.Join(dir, fileName)
-	}
+	// 	destinationPath = filepath.Join(dir, fileName)
+	// }
 
-	if err := a.fs.Move(sourcePath, destinationPath); err != nil {
-		return errors.New("failed to move file")
-	}
+	// if err := a.fs.Move(sourcePath, destinationPath); err != nil {
+	// 	return errors.New("failed to move file")
+	// }
 
-	if err := a.fs.Symlink(destinationPath, sourcePath); err != nil {
-		return errors.New("failed to symlink file")
-	}
+	// if err := a.fs.Symlink(destinationPath, sourcePath); err != nil {
+	// 	return errors.New("failed to symlink file")
+	// }
 
-	// normalize paths
-	home, _ := os.UserHomeDir()
-	sourcePath = strings.Replace(sourcePath, home, "$HOME", 1)
-	destinationPath = strings.Replace(destinationPath, a.appConfig.RepoDir, "", 1)
+	// // normalize paths
+	// home, _ := os.UserHomeDir()
+	// sourcePath = strings.Replace(sourcePath, home, "$HOME", 1)
+	// destinationPath = strings.Replace(destinationPath, a.appConfig.RepoDir, "", 1)
 
-	dotfile := config.Dotfile{
-		Source:      destinationPath,
-		Destination: sourcePath,
-	}
+	// dotfile := config.Dotfile{
+	// 	Source:      destinationPath,
+	// 	Destination: sourcePath,
+	// }
 
-	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
-		return errors.New("failed to write config")
-	}
+	// if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
+	// 	return errors.New("failed to write config")
+	// }
 
 	return nil
 }
 
 func (a App) DeployDotfiles() error {
-	for _, dotfile := range a.repoConfig.Dotfiles {
-		sourcePath := filepath.Join(a.appConfig.RepoDir, dotfile.Source)
-		destPath := os.ExpandEnv(dotfile.Destination)
+	// for _, dotfile := range a.repoConfig.Dotfiles {
+	// 	sourcePath := filepath.Join(a.appConfig.RepoDir, dotfile.Source)
+	// 	destPath := os.ExpandEnv(dotfile.Destination)
 
-		_, err := os.Stat(destPath)
-		if err == nil {
-			symlinkPath, err := a.fs.SymlinkPath(destPath)
-			if err == nil && sourcePath == symlinkPath {
-				a.Logger.Warn("file already deployed from dotx")
-				continue
-			}
+	// 	_, err := os.Stat(destPath)
+	// 	if err == nil {
+	// 		symlinkPath, err := a.fs.SymlinkPath(destPath)
+	// 		if err == nil && sourcePath == symlinkPath {
+	// 			a.Logger.Warn("file already deployed from dotx")
+	// 			continue
+	// 		}
 
-			reader := bufio.NewReader(os.Stdin)
-			fmt.Print("Dotfile already exists on your sytem. Do you want to backup and overwrite? (Y/n): ")
-			char, _, err := reader.ReadRune()
-			if err != nil {
-				return err
-			}
+	// 		reader := bufio.NewReader(os.Stdin)
+	// 		fmt.Print("Dotfile already exists on your sytem. Do you want to backup and overwrite? (Y/n): ")
+	// 		char, _, err := reader.ReadRune()
+	// 		if err != nil {
+	// 			return err
+	// 		}
 
-			switch char {
-			case 'y', 'Y', '\n':
-			// TODO move existing file to backup folder
-			case 'n', 'N':
-				continue
-			default:
-				return errors.New("invalid user input")
-			}
-		}
+	// 		switch char {
+	// 		case 'y', 'Y', '\n':
+	// 		// TODO move existing file to backup folder
+	// 		case 'n', 'N':
+	// 			continue
+	// 		default:
+	// 			return errors.New("invalid user input")
+	// 		}
+	// 	}
 
-		dirPath := filepath.Dir(destPath)
-		if err := a.fs.Mkdir(dirPath); err != nil {
-			return errors.New("failed to create dir")
-		}
+	// 	dirPath := filepath.Dir(destPath)
+	// 	if err := a.fs.Mkdir(dirPath); err != nil {
+	// 		return errors.New("failed to create dir")
+	// 	}
 
-		if err := a.fs.Symlink(sourcePath, destPath); err != nil {
-			return errors.New("failed to symlink file")
-		}
-	}
+	// 	if err := a.fs.Symlink(sourcePath, destPath); err != nil {
+	// 		return errors.New("failed to symlink file")
+	// 	}
+	// }
 
 	return nil
 }

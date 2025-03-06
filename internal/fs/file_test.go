@@ -136,7 +136,7 @@ func TestIsSymlink(t *testing.T) {
 	var tests = []struct {
 		test      string
 		path      string
-		IsSymlink bool
+		isSymlink bool
 	}{
 		{"existing symlink", filepath.Join("testdata", "symlink"), true},
 		{"no symlink", filepath.Join("testdata", ".bashrc"), false},
@@ -147,8 +147,8 @@ func TestIsSymlink(t *testing.T) {
 		t.Run(tt.test, func(t *testing.T) {
 			file := NewFile(tt.path)
 			isSymlink := file.IsSymlink()
-			if isSymlink != tt.IsSymlink {
-				t.Errorf("got %t, want %t", isSymlink, tt.IsSymlink)
+			if isSymlink != tt.isSymlink {
+				t.Errorf("got %t, want %t", isSymlink, tt.isSymlink)
 			}
 		})
 	}
