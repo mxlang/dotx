@@ -1,4 +1,4 @@
-package cmd
+package cli
 
 import (
 	"github.com/mlang97/dotx/internal/dotx"
