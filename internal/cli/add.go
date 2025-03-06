@@ -2,6 +2,7 @@ package cli
 
 import (
 	"github.com/mlang97/dotx/internal/dotx"
+	"github.com/mlang97/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -13,10 +14,10 @@ func newCmdAdd(dotx dotx.App) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.AddDotfile(args[0]); err != nil {
-				dotx.Logger.Error("failed to add file", "error", err)
+				logger.Error("failed to add file", "error", err)
 			}
 
-			dotx.Logger.Info("successfully added to dotfiles repo")
+			logger.Info("successfully added to dotfiles repo")
 		},
 	}
 }

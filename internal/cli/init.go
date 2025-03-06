@@ -2,6 +2,7 @@ package cli
 
 import (
 	"github.com/mlang97/dotx/internal/dotx"
+	"github.com/mlang97/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -13,12 +14,12 @@ func newCmdInit(dotx dotx.App) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.InitializeRemoteRepo(args[0]); err != nil {
-				dotx.Logger.Error("failed to init remote repo", "error", err)
+				logger.Error("failed to init remote repo", "error", err)
 			}
 
 			// TODO create .gitignore if not exists and add backup folder to it
 
-			dotx.Logger.Info("successfully init remote repo")
+			logger.Info("successfully init remote repo")
 		},
 	}
 }

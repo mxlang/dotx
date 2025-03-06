@@ -9,20 +9,17 @@ import (
 
 	"github.com/mlang97/dotx/internal/config"
 	"github.com/mlang97/dotx/internal/fs"
-	"github.com/mlang97/dotx/internal/log"
 )
 
 type App struct {
-	Logger log.Logger
-	fs     fs.Filesystem
+	fs fs.Filesystem
 
 	appConfig  config.AppConfig
 	repoConfig config.RepoConfig
 }
 
-func New(logger log.Logger, fs fs.Filesystem, appConfig config.AppConfig, repoConfig config.RepoConfig) App {
+func New(fs fs.Filesystem, appConfig config.AppConfig, repoConfig config.RepoConfig) App {
 	return App{
-		Logger:     logger,
 		fs:         fs,
 		appConfig:  appConfig,
 		repoConfig: repoConfig,
@@ -35,9 +32,9 @@ func (a App) EnsureRepo() error {
 }
 
 func (a App) AddDotfile(path string) error {
-	fileName := filepath.Base(path)
+	filename := filepath.Base(path)
 	source := fs.NewPath(path)
-	dest := fs.NewPath(filepath.Join(a.appConfig.RepoDir, fileName))
+	dest := fs.NewPath(filepath.Join(a.appConfig.RepoDir, filename))
 
 	if a.repoConfig.GetDotfile(source.AbsPath()) != (config.Dotfile{}) {
 		return errors.New("dotfile already exist")

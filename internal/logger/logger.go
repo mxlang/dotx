@@ -1,0 +1,33 @@
+package logger
+
+import (
+	"os"
+
+	l "github.com/charmbracelet/log"
+)
+
+var log *l.Logger
+
+func Debug(msg any, keys ...any) {
+	log.Debug(msg, keys...)
+}
+
+func Info(msg any, keys ...any) {
+	log.Info(msg, keys...)
+}
+
+func Warn(msg any, keys ...any) {
+	log.Warn(msg, keys...)
+}
+
+func Error(msg any, keys ...any) {
+	log.Error(msg, keys...)
+	os.Exit(1)
+}
+
+func init() {
+	log = l.New(os.Stderr)
+	log.SetReportTimestamp(false)
+	log.SetReportCaller(false)
+	log.SetLevel(l.DebugLevel)
+}

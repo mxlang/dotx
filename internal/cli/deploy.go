@@ -2,6 +2,7 @@ package cli
 
 import (
 	"github.com/mlang97/dotx/internal/dotx"
+	"github.com/mlang97/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -13,10 +14,10 @@ func newCmdDeploy(dotx dotx.App) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.DeployDotfiles(); err != nil {
-				dotx.Logger.Error("failed to deploy your dotfiles", "err", err)
+				logger.Error("failed to deploy your dotfiles", "err", err)
 			}
 
-			dotx.Logger.Info("successfully deployed your dotfiles")
+			logger.Info("successfully deployed your dotfiles")
 		},
 	}
 }
