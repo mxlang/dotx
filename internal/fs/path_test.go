@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestName(t *testing.T) {
+func TestFilename(t *testing.T) {
 	var tests = []struct {
 		test string
 		path string
@@ -20,8 +20,8 @@ func TestName(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			file := NewFile(tt.path)
-			filename := file.Name()
+			path := NewPath(tt.path)
+			filename := path.Filename()
 			if filename != tt.name {
 				t.Errorf("got %s, want %s", filename, tt.name)
 			}
@@ -45,8 +45,8 @@ func TestAbsPath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			file := NewFile(tt.path)
-			absPath := file.AbsPath()
+			path := NewPath(tt.path)
+			absPath := path.AbsPath()
 			if absPath != tt.absPath {
 				t.Errorf("got %s, want %s", absPath, tt.absPath)
 			}
@@ -70,8 +70,8 @@ func TestDir(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			file := NewFile(tt.path)
-			dir := file.Dir()
+			path := NewPath(tt.path)
+			dir := path.Dir()
 			if dir != tt.dir {
 				t.Errorf("got %s, want %s", dir, tt.dir)
 			}
@@ -100,8 +100,8 @@ func TestExists(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			file := NewFile(tt.path)
-			exists := file.Exists()
+			path := NewPath(tt.path)
+			exists := path.Exists()
 			if exists != tt.shouldExist {
 				t.Errorf("got %t, want %t", exists, tt.shouldExist)
 			}
@@ -123,8 +123,8 @@ func TestIsDir(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			file := NewFile(tt.path)
-			isDir := file.IsDir()
+			path := NewPath(tt.path)
+			isDir := path.IsDir()
 			if isDir != tt.isDir {
 				t.Errorf("got %t, want %t", isDir, tt.isDir)
 			}
@@ -145,8 +145,8 @@ func TestIsSymlink(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			file := NewFile(tt.path)
-			isSymlink := file.IsSymlink()
+			path := NewPath(tt.path)
+			isSymlink := path.IsSymlink()
 			if isSymlink != tt.isSymlink {
 				t.Errorf("got %t, want %t", isSymlink, tt.isSymlink)
 			}
@@ -169,8 +169,8 @@ func TestSymlinkPath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			file := NewFile(tt.path)
-			symlinkPath := file.SymlinkPath()
+			path := NewPath(tt.path)
+			symlinkPath := path.SymlinkPath()
 			if symlinkPath != tt.symlinkPath {
 				t.Errorf("got %s, want %s", symlinkPath, tt.symlinkPath)
 			}

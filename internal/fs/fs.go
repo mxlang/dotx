@@ -6,9 +6,9 @@ import (
 )
 
 type Filesystem interface {
-	Move(source File, dest File) error
-	Symlink(source File, dest File) error
-	Mkdir(path File) error
+	Move(source Path, dest Path) error
+	Symlink(source Path, dest Path) error
+	Mkdir(path Path) error
 }
 
 type Fs struct {
@@ -18,7 +18,7 @@ func NewFs() Fs {
 	return Fs{}
 }
 
-func (fs Fs) Move(source File, dest File) error {
+func (fs Fs) Move(source Path, dest Path) error {
 	if !source.Exists() {
 		return errors.New("source path does not exist")
 	}
@@ -27,14 +27,14 @@ func (fs Fs) Move(source File, dest File) error {
 		return errors.New("destination path already exists")
 	}
 
-	if err := os.Rename(source.path, dest.path); err != nil {
+	if err := os.Rename(source.absPath, dest.absPath); err != nil {
 		return errors.New("failed to move")
 	}
 
 	return nil
 }
 
-func (fs Fs) Symlink(source File, dest File) error {
+func (fs Fs) Symlink(source Path, dest Path) error {
 	if !source.Exists() {
 		return errors.New("source path does not exist")
 	}
@@ -43,13 +43,13 @@ func (fs Fs) Symlink(source File, dest File) error {
 		return errors.New("destination path already exists")
 	}
 
-	if err := os.Symlink(source.path, dest.path); err != nil {
+	if err := os.Symlink(source.absPath, dest.absPath); err != nil {
 		return errors.New("failed to symlink")
 	}
 
 	return nil
 }
 
-func (fs Fs) Mkdir(path File) error {
-	return os.MkdirAll(path.path, 0777)
+func (fs Fs) Mkdir(path Path) error {
+	return os.MkdirAll(path.absPath, 0777)
 }

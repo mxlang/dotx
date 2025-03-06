@@ -27,7 +27,7 @@ func New(logger log.Logger, fs fs.Filesystem, appConfig config.AppConfig, repoCo
 }
 
 func (a App) EnsureRepo() error {
-	dir := fs.NewFile(a.appConfig.RepoDir)
+	dir := fs.NewPath(a.appConfig.RepoDir)
 	return a.fs.Mkdir(dir)
 }
 

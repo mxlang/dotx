@@ -6,13 +6,6 @@ import (
 	"testing"
 )
 
-type testSuite struct {
-	name string
-
-	setup   func()
-	cleanup func()
-}
-
 func TestMove(t *testing.T) {
 	var tests = []struct {
 		test   string
@@ -24,8 +17,8 @@ func TestMove(t *testing.T) {
 	}{
 		{"rename .bashrc to .zshrc", filepath.Join("testdata", ".bashrc"), filepath.Join("testdata", ".zshrc"), "",
 			func(fs Fs, sourcePath string, destPath string) {
-				source := NewFile(sourcePath)
-				dest := NewFile(destPath)
+				source := NewPath(sourcePath)
+				dest := NewPath(destPath)
 				fs.Move(dest, source)
 			}},
 		{"dest dir does not exist", filepath.Join("testdata", ".bashrc"), filepath.Join("test", ".bashrc"), "failed to move",
@@ -40,8 +33,8 @@ func TestMove(t *testing.T) {
 		t.Run(tt.test, func(t *testing.T) {
 			fs := NewFs()
 
-			source := NewFile(tt.source)
-			dest := NewFile(tt.dest)
+			source := NewPath(tt.source)
+			dest := NewPath(tt.dest)
 
 			err := fs.Move(source, dest)
 			if err != nil && err.Error() != tt.errMsg {
@@ -78,8 +71,8 @@ func TestSymlink(t *testing.T) {
 		t.Run(tt.test, func(t *testing.T) {
 			fs := NewFs()
 
-			source := NewFile(tt.source)
-			dest := NewFile(tt.dest)
+			source := NewPath(tt.source)
+			dest := NewPath(tt.dest)
 
 			err := fs.Symlink(source, dest)
 			if err != nil && err.Error() != tt.errMsg {
@@ -95,12 +88,12 @@ func TestSymlink(t *testing.T) {
 
 func TestMkdir(t *testing.T) {
 	fs := NewFs()
-	dir := NewFile(filepath.Join("testdata", "test"))
+	path := NewPath(filepath.Join("testdata", "test"))
 
-	err := fs.Mkdir(dir)
+	err := fs.Mkdir(path)
 	if err != nil {
 		t.Errorf("got %s, want no error", err.Error())
 	}
 
-	os.Remove(dir.path)
+	os.Remove(path.absPath)
 }
