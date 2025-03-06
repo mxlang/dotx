@@ -2,7 +2,10 @@ package dotx
 
 import (
 	"errors"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 
 	"github.com/mlang97/dotx/internal/config"
 	"github.com/mlang97/dotx/internal/fs"
@@ -31,45 +34,36 @@ func (a App) EnsureRepo() error {
 	return a.fs.Mkdir(dir)
 }
 
-func (a App) AddDotfile(path string, optDir string) error {
-	// fileName := filepath.Base(path)
-	// sourcePath, _ := a.fs.AbsPath(path)
-	// destinationPath := filepath.Join(a.appConfig.RepoDir, fileName)
+func (a App) AddDotfile(path string) error {
+	fileName := filepath.Base(path)
+	source := fs.NewPath(path)
+	dest := fs.NewPath(filepath.Join(a.appConfig.RepoDir, fileName))
 
-	// if a.repoConfig.GetDotfile(sourcePath) != (config.Dotfile{}) {
-	// 	return errors.New("dotfile already exist")
-	// }
+	if a.repoConfig.GetDotfile(source.AbsPath()) != (config.Dotfile{}) {
+		return errors.New("dotfile already exist")
+	}
 
-	// if optDir != "" {
-	// 	dir := filepath.Join(a.appConfig.RepoDir, optDir)
-	// 	if err := a.fs.Mkdir(dir); err != nil {
-	// 		return errors.New("failed to create dir")
-	// 	}
+	if err := a.fs.Move(source, dest); err != nil {
+		return errors.New("failed to move file")
+	}
 
-	// 	destinationPath = filepath.Join(dir, fileName)
-	// }
+	if err := a.fs.Symlink(source, dest); err != nil {
+		return errors.New("failed to symlink file")
+	}
 
-	// if err := a.fs.Move(sourcePath, destinationPath); err != nil {
-	// 	return errors.New("failed to move file")
-	// }
+	// normalize paths
+	home, _ := os.UserHomeDir()
+	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
+	destinationPath := strings.Replace(dest.AbsPath(), a.appConfig.RepoDir, "", 1)
 
-	// if err := a.fs.Symlink(destinationPath, sourcePath); err != nil {
-	// 	return errors.New("failed to symlink file")
-	// }
+	dotfile := config.Dotfile{
+		Source:      destinationPath,
+		Destination: sourcePath,
+	}
 
-	// // normalize paths
-	// home, _ := os.UserHomeDir()
-	// sourcePath = strings.Replace(sourcePath, home, "$HOME", 1)
-	// destinationPath = strings.Replace(destinationPath, a.appConfig.RepoDir, "", 1)
-
-	// dotfile := config.Dotfile{
-	// 	Source:      destinationPath,
-	// 	Destination: sourcePath,
-	// }
-
-	// if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
-	// 	return errors.New("failed to write config")
-	// }
+	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
+		return errors.New("failed to write config")
+	}
 
 	return nil
 }
