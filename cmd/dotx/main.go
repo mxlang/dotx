@@ -7,10 +7,13 @@ import (
 )
 
 func main() {
-	appConfig := config.FromAppFile()
-	repoConfig := config.FromRepoFile(appConfig)
+	config.EnsureDirs()
 
-	dotx := dotx.New(appConfig, repoConfig)
+	app := dotx.New(
+		config.LoadAppConfig(),
+		config.LoadRepoConfig(),
+	)
 
-	cli.Execute(dotx)
+	cli.Execute(app)
+
 }

@@ -2,74 +2,49 @@ package config
 
 import (
 	"errors"
+	"github.com/adrg/xdg"
+	"github.com/goccy/go-yaml"
+	"github.com/mlang97/dotx/internal/logger"
 	"os"
 	"path/filepath"
-	"slices"
-
-	"github.com/spf13/viper"
 )
 
-var repoConfigLoader *viper.Viper
-
 type RepoConfig struct {
-	appConfig AppConfig
-
-	Dotfiles []Dotfile
+	Dotfiles []Dotfile `yaml:"dotfiles"`
 }
 
 type Dotfile struct {
-	Source      string
-	Destination string
+	Source      string `yaml:"source"`
+	Destination string `yaml:"destination"`
 }
 
-func FromRepoFile(appConfig AppConfig) RepoConfig {
-	config := RepoConfig{
-		appConfig: appConfig,
+func LoadRepoConfig() RepoConfig {
+	config := RepoConfig{}
+
+	path := filepath.Join(xdg.DataHome, baseDir, repoDir, repoConfigFile)
+
+	content, err := os.ReadFile(path)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			logger.Debug("config for dotfiles repo not found")
+		} else {
+			logger.Warn("error while reading dotfiles repo config", "error", err)
+		}
+
+		return config
 	}
 
-	repoConfigLoader.SetConfigName("dotx")
-	repoConfigLoader.SetConfigType("yaml")
-	repoConfigLoader.AddConfigPath(os.ExpandEnv(appConfig.RepoDir))
-
-	repoConfigLoader.ReadInConfig()
-	repoConfigLoader.Unmarshal(&config)
+	if err := yaml.Unmarshal(content, &config); err != nil {
+		logger.Warn("unable to unmarshal dotfiles repo config", "error", err)
+	}
 
 	return config
 }
 
-func (r RepoConfig) GetDotfile(destPath string) Dotfile {
-	for _, df := range r.Dotfiles {
-		if os.ExpandEnv(df.Destination) == destPath {
-			return df
-		}
-	}
-
-	return Dotfile{}
+func repoDirPath() string {
+	return filepath.Join(xdg.ConfigHome, baseDir, repoDir)
 }
 
-func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
-	repoConfigFile := filepath.Join(os.ExpandEnv(r.appConfig.RepoDir), "dotx.yaml")
-
-	// create dotx.yaml in repo dir if not exists
-	if _, err := os.Stat(repoConfigFile); err != nil {
-		if _, err := os.Create(repoConfigFile); err != nil {
-			return err
-		}
-	}
-
-	if slices.Contains(r.Dotfiles, dotfile) {
-		return errors.New("dotfile already added")
-	}
-
-	repoConfigLoader.Set("dotfiles", append(r.Dotfiles, dotfile))
-
-	if err := repoConfigLoader.WriteConfig(); err != nil {
-		return errors.New("failed to write repo config")
-	}
-
-	return nil
-}
-
-func init() {
-	repoConfigLoader = viper.New()
+func repoConfigFilePath() string {
+	return filepath.Join(repoDirPath(), repoConfigFile)
 }

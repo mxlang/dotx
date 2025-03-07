@@ -1,14 +1,7 @@
 package dotx
 
 import (
-	"errors"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
-
 	"github.com/mlang97/dotx/internal/config"
-	"github.com/mlang97/dotx/internal/fs"
 )
 
 type App struct {
@@ -23,41 +16,36 @@ func New(appConfig config.AppConfig, repoConfig config.RepoConfig) App {
 	}
 }
 
-func (a App) EnsureRepo() error {
-	dir := fs.NewPath(a.appConfig.RepoDir)
-	return fs.Mkdir(dir)
-}
-
 func (a App) AddDotfile(path string) error {
-	filename := filepath.Base(path)
-	source := fs.NewPath(path)
-	dest := fs.NewPath(filepath.Join(a.appConfig.RepoDir, filename))
-
-	if a.repoConfig.GetDotfile(source.AbsPath()) != (config.Dotfile{}) {
-		return errors.New("dotfile already exist")
-	}
-
-	if err := fs.Move(source, dest); err != nil {
-		return err
-	}
-
-	if err := fs.Symlink(dest, source); err != nil {
-		return err
-	}
-
-	// normalize paths
-	home, _ := os.UserHomeDir()
-	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
-	destinationPath := strings.Replace(dest.AbsPath(), a.appConfig.RepoDir, "", 1)
-
-	dotfile := config.Dotfile{
-		Source:      destinationPath,
-		Destination: sourcePath,
-	}
-
-	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
-		return errors.New("failed to write config")
-	}
+	//filename := filepath.Base(path)
+	//source := fs.NewPath(path)
+	//dest := fs.NewPath(filepath.Join(a.appConfig.RepoDir, filename))
+	//
+	//if a.repoConfig.GetDotfile(source.AbsPath()) != (config.Dotfile{}) {
+	//	return errors.New("dotfile already exist")
+	//}
+	//
+	//if err := fs.Move(source, dest); err != nil {
+	//	return err
+	//}
+	//
+	//if err := fs.Symlink(dest, source); err != nil {
+	//	return err
+	//}
+	//
+	//// normalize paths
+	//home, _ := os.UserHomeDir()
+	//sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
+	//destinationPath := strings.Replace(dest.AbsPath(), a.appConfig.RepoDir, "", 1)
+	//
+	//dotfile := config.Dotfile{
+	//	Source:      destinationPath,
+	//	Destination: sourcePath,
+	//}
+	//
+	//if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
+	//	return errors.New("failed to write config")
+	//}
 
 	return nil
 }
@@ -106,10 +94,10 @@ func (a App) DeployDotfiles() error {
 }
 
 func (a App) InitializeRemoteRepo(remoteRepo string) error {
-	command := exec.Command("git", "clone", remoteRepo, a.appConfig.RepoDir)
-	if err := command.Run(); err != nil {
-		return errors.New("failed to clone remote repo")
-	}
+	//command := exec.Command("git", "clone", remoteRepo, a.appConfig.RepoDir)
+	//if err := command.Run(); err != nil {
+	//	return errors.New("failed to clone remote repo")
+	//}
 
 	return nil
 }
