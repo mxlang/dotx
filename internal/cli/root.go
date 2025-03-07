@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/mlang97/dotx/internal/logger"
 	"os"
 
 	"github.com/mlang97/dotx/internal/dotx"
@@ -19,6 +20,14 @@ func newCmdRoot(dotx dotx.App) *cobra.Command {
 		Use:   "dotx",
 		Short: "The next generation dotfile manager",
 		Args:  cobra.NoArgs,
+
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			if dotx.AppConfig.Verbose {
+				logger.SetLevel(logger.DebugLevel)
+			} else {
+				logger.SetLevel(logger.InfoLevel)
+			}
+		},
 	}
 
 	rootCmd.AddCommand(

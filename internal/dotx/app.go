@@ -5,13 +5,13 @@ import (
 )
 
 type App struct {
-	appConfig  config.AppConfig
+	AppConfig  config.AppConfig
 	repoConfig config.RepoConfig
 }
 
 func New(appConfig config.AppConfig, repoConfig config.RepoConfig) App {
 	return App{
-		appConfig:  appConfig,
+		AppConfig:  appConfig,
 		repoConfig: repoConfig,
 	}
 }
