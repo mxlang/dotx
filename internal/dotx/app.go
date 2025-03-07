@@ -1,7 +1,10 @@
 package dotx
 
 import (
+	"fmt"
 	"github.com/mlang97/dotx/internal/config"
+	"github.com/mlang97/dotx/internal/fs"
+	"path/filepath"
 )
 
 type App struct {
@@ -17,10 +20,15 @@ func New(appConfig config.AppConfig, repoConfig config.RepoConfig) App {
 }
 
 func (a App) AddDotfile(path string) error {
-	//filename := filepath.Base(path)
-	//source := fs.NewPath(path)
-	//dest := fs.NewPath(filepath.Join(a.appConfig.RepoDir, filename))
-	//
+	filename := filepath.Base(path)
+	source := fs.NewPath(path)
+	dest := fs.NewPath(filepath.Join(config.RepoDirPath(), filename))
+
+	fmt.Println(path)
+	fmt.Println(filename)
+	fmt.Println(source)
+	fmt.Println(dest)
+
 	//if a.repoConfig.GetDotfile(source.AbsPath()) != (config.Dotfile{}) {
 	//	return errors.New("dotfile already exist")
 	//}

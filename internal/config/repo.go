@@ -21,7 +21,7 @@ type Dotfile struct {
 func LoadRepoConfig() RepoConfig {
 	config := RepoConfig{}
 
-	path := filepath.Join(xdg.DataHome, baseDir, repoDir, repoConfigFile)
+	path := repoConfigFilePath()
 
 	content, err := os.ReadFile(path)
 	if err != nil {
@@ -41,10 +41,10 @@ func LoadRepoConfig() RepoConfig {
 	return config
 }
 
-func repoDirPath() string {
-	return filepath.Join(xdg.ConfigHome, baseDir, repoDir)
+func RepoDirPath() string {
+	return filepath.Join(xdg.DataHome, baseDir, repoDir)
 }
 
 func repoConfigFilePath() string {
-	return filepath.Join(repoDirPath(), repoConfigFile)
+	return filepath.Join(RepoDirPath(), repoConfigFile)
 }

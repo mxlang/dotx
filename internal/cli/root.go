@@ -24,8 +24,6 @@ func newCmdRoot(dotx dotx.App) *cobra.Command {
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			if dotx.AppConfig.Verbose {
 				logger.SetLevel(logger.DebugLevel)
-			} else {
-				logger.SetLevel(logger.InfoLevel)
 			}
 		},
 	}

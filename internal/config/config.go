@@ -17,13 +17,13 @@ func EnsureDirs() {
 	if err := fs.Mkdir(appDir); err != nil {
 		logger.Error("error while creating dotx config dir", "error", err)
 	} else {
-		logger.Debug("dotx config dir created or already existent", "dir", appDir)
+		logger.Debug("dotx config dir created or already existent", "dir", appDir.AbsPath())
 	}
 
-	repoDir := fs.NewPath(repoDirPath())
+	repoDir := fs.NewPath(RepoDirPath())
 	if err := fs.Mkdir(repoDir); err != nil {
 		logger.Error("error while creating dotfiles repo dir", "error", err)
 	} else {
-		logger.Debug("dotfiles repo dir created or already existent", "dir", repoDir)
+		logger.Debug("dotfiles repo dir created or already existent", "dir", repoDir.AbsPath())
 	}
 }
