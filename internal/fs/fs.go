@@ -5,20 +5,7 @@ import (
 	"os"
 )
 
-type Filesystem interface {
-	Move(source Path, dest Path) error
-	Symlink(source Path, dest Path) error
-	Mkdir(path Path) error
-}
-
-type Fs struct {
-}
-
-func NewFs() Fs {
-	return Fs{}
-}
-
-func (fs Fs) Move(source Path, dest Path) error {
+func Move(source Path, dest Path) error {
 	if !source.Exists() {
 		return errors.New("source path does not exist")
 	}
@@ -34,7 +21,7 @@ func (fs Fs) Move(source Path, dest Path) error {
 	return nil
 }
 
-func (fs Fs) Symlink(source Path, dest Path) error {
+func Symlink(source Path, dest Path) error {
 	if !source.Exists() {
 		return errors.New("source path does not exist")
 	}
@@ -50,6 +37,6 @@ func (fs Fs) Symlink(source Path, dest Path) error {
 	return nil
 }
 
-func (fs Fs) Mkdir(path Path) error {
+func Mkdir(path Path) error {
 	return os.MkdirAll(path.absPath, 0777)
 }

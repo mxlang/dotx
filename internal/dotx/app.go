@@ -12,15 +12,12 @@ import (
 )
 
 type App struct {
-	fs fs.Filesystem
-
 	appConfig  config.AppConfig
 	repoConfig config.RepoConfig
 }
 
-func New(fs fs.Filesystem, appConfig config.AppConfig, repoConfig config.RepoConfig) App {
+func New(appConfig config.AppConfig, repoConfig config.RepoConfig) App {
 	return App{
-		fs:         fs,
 		appConfig:  appConfig,
 		repoConfig: repoConfig,
 	}
@@ -28,7 +25,7 @@ func New(fs fs.Filesystem, appConfig config.AppConfig, repoConfig config.RepoCon
 
 func (a App) EnsureRepo() error {
 	dir := fs.NewPath(a.appConfig.RepoDir)
-	return a.fs.Mkdir(dir)
+	return fs.Mkdir(dir)
 }
 
 func (a App) AddDotfile(path string) error {
@@ -40,11 +37,11 @@ func (a App) AddDotfile(path string) error {
 		return errors.New("dotfile already exist")
 	}
 
-	if err := a.fs.Move(source, dest); err != nil {
+	if err := fs.Move(source, dest); err != nil {
 		return err
 	}
 
-	if err := a.fs.Symlink(dest, source); err != nil {
+	if err := fs.Symlink(dest, source); err != nil {
 		return err
 	}
 
