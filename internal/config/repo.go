@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/adrg/xdg"
 	"github.com/goccy/go-yaml"
+	"github.com/mlang97/dotx/internal/fs"
 	"github.com/mlang97/dotx/internal/logger"
 	"os"
 	"path/filepath"
@@ -18,9 +19,35 @@ type Dotfile struct {
 	Destination string `yaml:"destination"`
 }
 
-func LoadRepoConfig() RepoConfig {
-	config := RepoConfig{}
+func (r RepoConfig) DotfileExists(path fs.Path) bool {
+	for _, dotfile := range r.Dotfiles {
+		if fs.NewPath(dotfile.Destination) == path {
+			return true
+		}
+	}
 
+	return false
+}
+
+func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
+	r.Dotfiles = append(r.Dotfiles, dotfile)
+
+	config, err := yaml.Marshal(r)
+	if err != nil {
+		return errors.New("unable to marshal dotfiles repo config")
+	}
+
+	if err := os.WriteFile(repoConfigFilePath(), config, 0644); err != nil {
+		return errors.New("unable to write dotfiles repo config")
+	}
+
+	return nil
+}
+
+func LoadRepoConfig() RepoConfig {
+	ensureRepoConfigDir()
+
+	config := RepoConfig{}
 	path := repoConfigFilePath()
 
 	content, err := os.ReadFile(path)
@@ -39,6 +66,15 @@ func LoadRepoConfig() RepoConfig {
 	}
 
 	return config
+}
+
+func ensureRepoConfigDir() {
+	repoDir := fs.NewPath(RepoDirPath())
+	if err := fs.Mkdir(repoDir); err != nil {
+		logger.Error("error while creating dotfiles repo dir", "error", err)
+	} else {
+		logger.Debug("dotfiles repo dir created or already existent", "dir", repoDir.AbsPath())
+	}
 }
 
 func RepoDirPath() string {

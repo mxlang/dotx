@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/adrg/xdg"
 	"github.com/goccy/go-yaml"
+	"github.com/mlang97/dotx/internal/fs"
 	"github.com/mlang97/dotx/internal/logger"
 	"os"
 	"path/filepath"
@@ -14,8 +15,9 @@ type AppConfig struct {
 }
 
 func LoadAppConfig() AppConfig {
-	config := defaultAppConfig()
+	ensureAppConfigDir()
 
+	config := defaultAppConfig()
 	path := appConfigFilePath()
 
 	content, err := os.ReadFile(path)
@@ -34,6 +36,15 @@ func LoadAppConfig() AppConfig {
 	}
 
 	return config
+}
+
+func ensureAppConfigDir() {
+	appDir := fs.NewPath(appDirPath())
+	if err := fs.Mkdir(appDir); err != nil {
+		logger.Error("error while creating dotx config dir", "error", err)
+	} else {
+		logger.Debug("dotx config dir created or already existent", "dir", appDir.AbsPath())
+	}
 }
 
 func defaultAppConfig() AppConfig {

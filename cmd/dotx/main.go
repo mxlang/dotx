@@ -7,13 +7,10 @@ import (
 )
 
 func main() {
-	config.EnsureDirs()
-
 	app := dotx.New(
 		config.LoadAppConfig(),
 		config.LoadRepoConfig(),
 	)
 
 	cli.Execute(app)
-
 }

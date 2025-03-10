@@ -1,10 +1,12 @@
 package dotx
 
 import (
-	"fmt"
+	"errors"
 	"github.com/mlang97/dotx/internal/config"
 	"github.com/mlang97/dotx/internal/fs"
+	"os"
 	"path/filepath"
+	"strings"
 )
 
 type App struct {
@@ -24,36 +26,33 @@ func (a App) AddDotfile(path string) error {
 	source := fs.NewPath(path)
 	dest := fs.NewPath(filepath.Join(config.RepoDirPath(), filename))
 
-	fmt.Println(path)
-	fmt.Println(filename)
-	fmt.Println(source)
-	fmt.Println(dest)
+	// check dotfile already added to repo
+	if a.repoConfig.DotfileExists(source) {
+		return errors.New("dotfile already exists")
+	}
 
-	//if a.repoConfig.GetDotfile(source.AbsPath()) != (config.Dotfile{}) {
-	//	return errors.New("dotfile already exist")
-	//}
-	//
-	//if err := fs.Move(source, dest); err != nil {
-	//	return err
-	//}
-	//
-	//if err := fs.Symlink(dest, source); err != nil {
-	//	return err
-	//}
-	//
-	//// normalize paths
-	//home, _ := os.UserHomeDir()
-	//sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
-	//destinationPath := strings.Replace(dest.AbsPath(), a.appConfig.RepoDir, "", 1)
-	//
-	//dotfile := config.Dotfile{
-	//	Source:      destinationPath,
-	//	Destination: sourcePath,
-	//}
-	//
-	//if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
-	//	return errors.New("failed to write config")
-	//}
+	if err := fs.Move(source, dest); err != nil {
+		return err
+	}
+
+	if err := fs.Symlink(dest, source); err != nil {
+		return err
+	}
+
+	// normalize paths
+	// TODO refactor move to WriteDotfile
+	home, _ := os.UserHomeDir()
+	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
+	destinationPath := strings.Replace(dest.AbsPath(), config.RepoDirPath(), "", 1)
+
+	dotfile := config.Dotfile{
+		Source:      destinationPath,
+		Destination: sourcePath,
+	}
+
+	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
+		return err
+	}
 
 	return nil
 }

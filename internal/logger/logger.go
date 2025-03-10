@@ -51,7 +51,5 @@ func init() {
 	log = l.New(os.Stderr)
 	log.SetReportTimestamp(false)
 	log.SetReportCaller(false)
-
-	// default is debug because config package uses some debug logs and verbose flag is loaded afterwards
-	log.SetLevel(l.DebugLevel)
+	log.SetLevel(l.InfoLevel)
 }
