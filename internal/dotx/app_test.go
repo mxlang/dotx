@@ -5,17 +5,24 @@ import (
 	"github.com/mlang97/dotx/internal/config"
 	"github.com/mlang97/dotx/internal/fs"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
 const (
-	xdgBaseDir          = "/tmp"
-	appRootDir          = "/tmp/dotx"
-	localBashrc         = "testdata/.bashrc"
-	expectedSymlinkPath = "/tmp/dotx/dotfiles/.bashrc"
+	baseDir     = "testdata"
+	appDir      = "testdata/dotx"
+	localBashrc = "testdata/.bashrc"
+	repoBashrc  = "testdata/dotx/dotfiles/.bashrc"
 )
 
 func setupTest() {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	xdgBaseDir := filepath.Join(wd, baseDir)
 	if err := os.Setenv("XDG_CONFIG_HOME", xdgBaseDir); err != nil {
 		panic(err)
 	}
@@ -26,9 +33,11 @@ func setupTest() {
 }
 
 func cleanupTest() {
+	_ = os.RemoveAll(appDir)
+
+	// restore local bashrc
 	_ = os.Remove(localBashrc)
 	_, _ = os.Create(localBashrc)
-	_ = os.RemoveAll(appRootDir)
 }
 
 func TestAddDotfile(t *testing.T) {
@@ -50,7 +59,8 @@ func TestAddDotfile(t *testing.T) {
 		t.Errorf("expected to be a symlink")
 	}
 
-	if dotfile.SymlinkPath() != expectedSymlinkPath {
-		t.Errorf("got %s, want %s", dotfile.SymlinkPath(), expectedSymlinkPath)
+	expectedDotfile := fs.NewPath(repoBashrc)
+	if dotfile.SymlinkPath() != expectedDotfile.AbsPath() {
+		t.Errorf("got %s, want %s", dotfile.SymlinkPath(), expectedDotfile.AbsPath())
 	}
 }
