@@ -61,7 +61,7 @@ func LoadRepoConfig() *RepoConfig {
 		return config
 	}
 
-	if err := yaml.Unmarshal(content, &config); err != nil {
+	if err := yaml.Unmarshal(content, config); err != nil {
 		logger.Warn("unable to unmarshal dotfiles repo config", "error", err)
 	}
 
