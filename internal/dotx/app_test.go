@@ -33,11 +33,11 @@ func setupTest() {
 }
 
 func cleanupTest() {
-	_ = os.RemoveAll(appDir)
+	os.RemoveAll(appDir)
 
 	// restore local bashrc
-	_ = os.Remove(localBashrc)
-	_, _ = os.Create(localBashrc)
+	os.Remove(localBashrc)
+	os.Create(localBashrc)
 }
 
 func TestAddDotfile(t *testing.T) {
@@ -62,5 +62,48 @@ func TestAddDotfile(t *testing.T) {
 	expectedDotfile := fs.NewPath(repoBashrc)
 	if dotfile.SymlinkPath() != expectedDotfile.AbsPath() {
 		t.Errorf("got %s, want %s", dotfile.SymlinkPath(), expectedDotfile.AbsPath())
+	}
+}
+
+func TestAddDotfileAlreadyExists(t *testing.T) {
+	setupTest()
+	t.Cleanup(cleanupTest)
+
+	dotx := New(
+		config.LoadAppConfig(),
+		config.LoadRepoConfig(),
+	)
+
+	wantedErrMsg := "dotfile already exists"
+
+	err := dotx.AddDotfile(localBashrc)
+	if err != nil {
+		t.Errorf("got error %s, want none", err.Error())
+	}
+
+	err = dotx.AddDotfile(localBashrc)
+	if err == nil {
+		t.Errorf("want error, got none")
+	} else if err.Error() != wantedErrMsg {
+		t.Errorf("got error %s, want %s", err.Error(), wantedErrMsg)
+	}
+}
+
+func TestAddDotfileMissingSourcePath(t *testing.T) {
+	setupTest()
+	t.Cleanup(cleanupTest)
+
+	dotx := New(
+		config.LoadAppConfig(),
+		config.LoadRepoConfig(),
+	)
+
+	wantedErrMsg := "source path does not exist"
+
+	err := dotx.AddDotfile("testdata/.zshrc")
+	if err == nil {
+		t.Errorf("want error, got none")
+	} else if err.Error() != wantedErrMsg {
+		t.Errorf("got error %s, want %s", err.Error(), wantedErrMsg)
 	}
 }

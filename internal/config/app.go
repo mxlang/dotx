@@ -14,7 +14,7 @@ type AppConfig struct {
 	Verbose bool `yaml:"verbose"`
 }
 
-func LoadAppConfig() AppConfig {
+func LoadAppConfig() *AppConfig {
 	ensureAppConfigDir()
 
 	config := defaultAppConfig()
@@ -47,8 +47,8 @@ func ensureAppConfigDir() {
 	}
 }
 
-func defaultAppConfig() AppConfig {
-	return AppConfig{
+func defaultAppConfig() *AppConfig {
+	return &AppConfig{
 		Verbose: false,
 	}
 }

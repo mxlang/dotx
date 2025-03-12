@@ -10,11 +10,11 @@ import (
 )
 
 type App struct {
-	AppConfig  config.AppConfig
-	repoConfig config.RepoConfig
+	AppConfig  *config.AppConfig
+	repoConfig *config.RepoConfig
 }
 
-func New(appConfig config.AppConfig, repoConfig config.RepoConfig) App {
+func New(appConfig *config.AppConfig, repoConfig *config.RepoConfig) App {
 	return App{
 		AppConfig:  appConfig,
 		repoConfig: repoConfig,

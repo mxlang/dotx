@@ -19,7 +19,7 @@ type Dotfile struct {
 	Destination string `yaml:"destination"`
 }
 
-func (r RepoConfig) DotfileExists(path fs.Path) bool {
+func (r *RepoConfig) DotfileExists(path fs.Path) bool {
 	for _, dotfile := range r.Dotfiles {
 		if fs.NewPath(dotfile.Destination) == path {
 			return true
@@ -29,7 +29,7 @@ func (r RepoConfig) DotfileExists(path fs.Path) bool {
 	return false
 }
 
-func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
+func (r *RepoConfig) WriteDotfile(dotfile Dotfile) error {
 	r.Dotfiles = append(r.Dotfiles, dotfile)
 
 	config, err := yaml.Marshal(r)
@@ -44,10 +44,10 @@ func (r RepoConfig) WriteDotfile(dotfile Dotfile) error {
 	return nil
 }
 
-func LoadRepoConfig() RepoConfig {
+func LoadRepoConfig() *RepoConfig {
 	ensureRepoConfigDir()
 
-	config := RepoConfig{}
+	config := &RepoConfig{}
 	path := repoConfigFilePath()
 
 	content, err := os.ReadFile(path)
