@@ -19,9 +19,9 @@ type Dotfile struct {
 	Destination string `yaml:"destination"`
 }
 
-func (r *RepoConfig) DotfileExists(path fs.Path) bool {
+func (r *RepoConfig) DotfileExists(sourcePath fs.Path) bool {
 	for _, dotfile := range r.Dotfiles {
-		if fs.NewPath(dotfile.Destination) == path {
+		if fs.NewPath(dotfile.Destination) == sourcePath {
 			return true
 		}
 	}
