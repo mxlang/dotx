@@ -58,44 +58,29 @@ func (a App) AddDotfile(path string) error {
 }
 
 func (a App) DeployDotfiles() error {
-	// for _, dotfile := range a.repoConfig.Dotfiles {
-	// 	sourcePath := filepath.Join(a.appConfig.RepoDir, dotfile.Source)
-	// 	destPath := os.ExpandEnv(dotfile.Destination)
+	for _, dotfile := range a.repoConfig.Dotfiles {
+		source := fs.NewPath(filepath.Join(config.RepoDirPath(), dotfile.Source))
+		dest := fs.NewPath(dotfile.Destination)
 
-	// 	_, err := os.Stat(destPath)
-	// 	if err == nil {
-	// 		symlinkPath, err := a.fs.SymlinkPath(destPath)
-	// 		if err == nil && sourcePath == symlinkPath {
-	// 			a.Logger.Warn("file already deployed from dotx")
-	// 			continue
-	// 		}
+		if dest.Exists() {
+			if dest.IsSymlink() && dest.SymlinkPath() == source.AbsPath() {
+				// TODO log warning instead of return error
+				return errors.New("dotfile already deployed with dotx")
+			} else {
+				// TODO ask for overwrite with a TUI
+			}
+		}
 
-	// 		reader := bufio.NewReader(os.Stdin)
-	// 		fmt.Print("Dotfile already exists on your sytem. Do you want to backup and overwrite? (Y/n): ")
-	// 		char, _, err := reader.ReadRune()
-	// 		if err != nil {
-	// 			return err
-	// 		}
+		// create base dir if not exists
+		dir := fs.NewPath(dest.Dir())
+		if err := fs.Mkdir(dir); err != nil {
+			return errors.New("failed to create dir")
+		}
 
-	// 		switch char {
-	// 		case 'y', 'Y', '\n':
-	// 		// TODO move existing file to backup folder
-	// 		case 'n', 'N':
-	// 			continue
-	// 		default:
-	// 			return errors.New("invalid user input")
-	// 		}
-	// 	}
-
-	// 	dirPath := filepath.Dir(destPath)
-	// 	if err := a.fs.Mkdir(dirPath); err != nil {
-	// 		return errors.New("failed to create dir")
-	// 	}
-
-	// 	if err := a.fs.Symlink(sourcePath, destPath); err != nil {
-	// 		return errors.New("failed to symlink file")
-	// 	}
-	// }
+		if err := fs.Symlink(source, dest); err != nil {
+			return errors.New("failed to symlink file")
+		}
+	}
 
 	return nil
 }
