@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/mlang97/dotx/internal/dotx"
+	"github.com/mxlang/dotx/internal/dotx"
 	"github.com/spf13/cobra"
 )
 

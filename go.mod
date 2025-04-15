@@ -1,4 +1,4 @@
-module github.com/mlang97/dotx
+module github.com/mxlang/dotx
 
 go 1.24
 

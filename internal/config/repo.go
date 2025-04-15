@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/adrg/xdg"
 	"github.com/goccy/go-yaml"
-	"github.com/mlang97/dotx/internal/fs"
-	"github.com/mlang97/dotx/internal/logger"
+	"github.com/mxlang/dotx/internal/fs"
+	"github.com/mxlang/dotx/internal/logger"
 	"os"
 	"path/filepath"
 )

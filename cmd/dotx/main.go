@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/mlang97/dotx/internal/cli"
-	"github.com/mlang97/dotx/internal/config"
-	"github.com/mlang97/dotx/internal/dotx"
+	"github.com/mxlang/dotx/internal/cli"
+	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/dotx"
 )
 
 func main() {

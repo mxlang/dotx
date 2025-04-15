@@ -2,8 +2,8 @@ package dotx
 
 import (
 	"errors"
-	"github.com/mlang97/dotx/internal/config"
-	"github.com/mlang97/dotx/internal/fs"
+	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/fs"
 	"os"
 	"path/filepath"
 	"strings"
