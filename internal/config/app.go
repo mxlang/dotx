@@ -23,6 +23,7 @@ func LoadAppConfig() *AppConfig {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
+			// TODO debug is not working because of different log level at startup
 			logger.Debug("config for dotx not found")
 		} else {
 			logger.Warn("error while reading dotx config", "error", err)
