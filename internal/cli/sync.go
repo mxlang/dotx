@@ -8,7 +8,7 @@ import (
 func newCmdSync(dotx dotx.App) *cobra.Command {
 	syncCmd := &cobra.Command{
 		Use:   "sync",
-		Short: "A brief description of your command",
+		Short: "Manage every git related operations for your dotfiles repository",
 		Args:  cobra.NoArgs,
 	}
 
