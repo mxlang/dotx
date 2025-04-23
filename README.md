@@ -32,11 +32,6 @@
 
 ## Installation
 
-### Prerequisites
-
-- Go 1.18 or higher
-- Git
-
 ### From Source
 
 ```bash
@@ -50,6 +45,12 @@ cd dotx
 go install ./cmd/dotx
 ```
 
+### Go Tooling
+
+```bash
+go install github.com/mxlang/dotx.git
+```
+
 ## Usage
 
 ### Getting Started
@@ -59,8 +60,6 @@ go install ./cmd/dotx
 ```bash
 # Clone an existing dotfiles repository
 dotx sync init https://github.com/username/dotfiles.git
-
-# Or create a new repository and push it later
 ```
 
 2. **Add configuration files**:
@@ -158,22 +157,22 @@ dotx uses two configuration files that follow the [XDG Base Directory Specificat
 
 ### Application Configuration
 
-Located at `$XDG_CONFIG_HOME/dotx/config.yaml` (typically `~/.config/dotx/config.yaml` on Unix-like systems):
+Located at `$XDG_CONFIG_HOME/dotx/config.yaml` (typically `~/.config/dotx/config.yaml` on Linux and `~/Library/Application Support/dotx/config.yaml` on macOS):
 
 ```yaml
-verbose: false                    # Enable verbose logging
-commitMessage: "update dotfiles"  # Default commit message for sync push
+verbose: true                            # Enable verbose logging
+commitMessage: "default commit message"  # Default commit message for sync push
 ```
 
 ### Repository Configuration
 
-Located at `$XDG_DATA_HOME/dotx/dotfiles/dotx.yaml` (typically `~/.local/share/dotx/dotfiles/dotx.yaml` on Unix-like systems):
+Located at `$XDG_DATA_HOME/dotx/dotfiles/dotx.yaml` (typically `~/.local/share/dotx/dotfiles/dotx.yaml` on Linux and `~/Library/Application Support/dotx/dotfiles/dotx.yaml` on macOS):
 
 ```yaml
 dotfiles:
-  - source: "bashrc"
+  - source: "/.bashrc"
     destination: "$HOME/.bashrc"
-  - source: "config/nvim"
+  - source: "/.config/nvim"
     destination: "$HOME/.config/nvim"
 ```
 
