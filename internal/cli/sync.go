@@ -12,7 +12,10 @@ func newCmdSync(dotx dotx.App) *cobra.Command {
 		Args:  cobra.NoArgs,
 	}
 
-	syncCmd.AddCommand(newCmdInit(dotx))
+	syncCmd.AddCommand(
+		newCmdInit(dotx),
+		newCmdPull(dotx),
+	)
 
 	return syncCmd
 }

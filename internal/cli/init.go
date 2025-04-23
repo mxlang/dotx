@@ -13,11 +13,11 @@ func newCmdInit(dotx dotx.App) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := dotx.InitializeRemoteRepo(args[0]); err != nil {
-				logger.Error("failed to init remote repo", "error", err)
+			if err := dotx.CloneRemoteRepo(args[0]); err != nil {
+				logger.Error("failed to clone remote repo", "error", err)
 			}
 
-			logger.Info("successfully init remote repo")
+			logger.Info("successfully cloned remote repo")
 		},
 	}
 }

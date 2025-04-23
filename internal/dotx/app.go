@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
+	"github.com/mxlang/dotx/internal/git"
 	"os"
 	"path/filepath"
 	"strings"
@@ -85,11 +86,10 @@ func (a App) DeployDotfiles() error {
 	return nil
 }
 
-func (a App) InitializeRemoteRepo(remoteRepo string) error {
-	//command := exec.Command("git", "clone", remoteRepo, a.appConfig.RepoDir)
-	//if err := command.Run(); err != nil {
-	//	return errors.New("failed to clone remote repo")
-	//}
+func (a App) CloneRemoteRepo(remoteRepo string) error {
+	return git.Clone(remoteRepo)
+}
 
-	return nil
+func (a App) PullRemoteRepo() error {
+	return git.Pull()
 }
