@@ -35,3 +35,50 @@ func Pull() error {
 
 	return nil
 }
+
+func Add(path string) error {
+	repo, err := git.PlainOpen(config.RepoDirPath())
+	if err != nil {
+		return err
+	}
+
+	worktree, err := repo.Worktree()
+	if err != nil {
+		return err
+	}
+
+	_, err = worktree.Add(path)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Commit(message string) error {
+	repo, err := git.PlainOpen(config.RepoDirPath())
+	if err != nil {
+		return err
+	}
+
+	worktree, err := repo.Worktree()
+	if err != nil {
+		return err
+	}
+
+	_, err = worktree.Commit(message, &git.CommitOptions{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Push() error {
+	repo, err := git.PlainOpen(config.RepoDirPath())
+	if err != nil {
+		return err
+	}
+
+	return repo.Push(&git.PushOptions{})
+}

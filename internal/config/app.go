@@ -11,7 +11,8 @@ import (
 )
 
 type AppConfig struct {
-	Verbose bool `yaml:"verbose"`
+	Verbose       bool   `yaml:"verbose"`
+	CommitMessage string `yaml:"commitMessage"`
 }
 
 func LoadAppConfig() *AppConfig {
@@ -50,7 +51,8 @@ func ensureAppConfigDir() {
 
 func defaultAppConfig() *AppConfig {
 	return &AppConfig{
-		Verbose: false,
+		Verbose:       false,
+		CommitMessage: "update dotfiles",
 	}
 }
 

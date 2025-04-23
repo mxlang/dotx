@@ -15,6 +15,7 @@ func newCmdSync(dotx dotx.App) *cobra.Command {
 	syncCmd.AddCommand(
 		newCmdInit(dotx),
 		newCmdPull(dotx),
+		newCmdPush(dotx),
 	)
 
 	return syncCmd

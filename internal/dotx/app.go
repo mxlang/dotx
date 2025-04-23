@@ -80,3 +80,19 @@ func (a App) CloneRemoteRepo(remoteRepo string) error {
 func (a App) PullRemoteRepo() error {
 	return git.Pull()
 }
+
+func (a App) PushRemoteRepo(commitMessage string) error {
+	if err := git.Add("."); err != nil {
+		return err
+	}
+
+	if err := git.Commit(commitMessage); err != nil {
+		return err
+	}
+
+	if err := git.Push(); err != nil {
+		return err
+	}
+
+	return nil
+}
