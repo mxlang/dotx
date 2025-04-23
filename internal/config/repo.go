@@ -8,6 +8,7 @@ import (
 	"github.com/mxlang/dotx/internal/logger"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type RepoConfig struct {
@@ -29,7 +30,17 @@ func (r *RepoConfig) DotfileExists(source fs.Path) bool {
 	return false
 }
 
-func (r *RepoConfig) WriteDotfile(dotfile Dotfile) error {
+func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
+	// normalize paths
+	home, _ := os.UserHomeDir()
+	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
+	destinationPath := strings.Replace(dest.AbsPath(), RepoDirPath(), "", 1)
+
+	dotfile := Dotfile{
+		Source:      destinationPath,
+		Destination: sourcePath,
+	}
+
 	r.Dotfiles = append(r.Dotfiles, dotfile)
 
 	config, err := yaml.Marshal(r)

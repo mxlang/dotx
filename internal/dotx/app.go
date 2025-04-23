@@ -5,9 +5,7 @@ import (
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/git"
-	"os"
 	"path/filepath"
-	"strings"
 )
 
 type App struct {
@@ -40,18 +38,7 @@ func (a App) AddDotfile(path string) error {
 		return err
 	}
 
-	// normalize paths
-	// TODO refactor move to WriteDotfile
-	home, _ := os.UserHomeDir()
-	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
-	destinationPath := strings.Replace(dest.AbsPath(), config.RepoDirPath(), "", 1)
-
-	dotfile := config.Dotfile{
-		Source:      destinationPath,
-		Destination: sourcePath,
-	}
-
-	if err := a.repoConfig.WriteDotfile(dotfile); err != nil {
+	if err := a.repoConfig.WriteDotfile(source, dest); err != nil {
 		return err
 	}
 
@@ -75,11 +62,11 @@ func (a App) DeployDotfiles() error {
 		// create base dir if not exists
 		dir := fs.NewPath(dest.Dir())
 		if err := fs.Mkdir(dir); err != nil {
-			return errors.New("failed to create dir")
+			return err
 		}
 
 		if err := fs.Symlink(source, dest); err != nil {
-			return errors.New("failed to symlink file")
+			return err
 		}
 	}
 
