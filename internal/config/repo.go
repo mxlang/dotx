@@ -63,17 +63,15 @@ func LoadRepoConfig() *RepoConfig {
 
 	content, err := os.ReadFile(path)
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			logger.Debug("config for dotfiles repo not found")
-		} else {
-			logger.Warn("error while reading dotfiles repo config", "error", err)
+		if !errors.Is(err, os.ErrNotExist) {
+			logger.Warn("error while reading dotfiles config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, config); err != nil {
-		logger.Warn("unable to unmarshal dotfiles repo config", "error", err)
+		logger.Warn("invalid dotfiles config", "error", err)
 	}
 
 	return config
@@ -83,8 +81,6 @@ func ensureRepoConfigDir() {
 	repoDir := fs.NewPath(RepoDirPath())
 	if err := fs.Mkdir(repoDir); err != nil {
 		logger.Error("error while creating dotfiles repo dir", "error", err)
-	} else {
-		logger.Debug("dotfiles repo dir created or already existent", "dir", repoDir.AbsPath())
 	}
 }
 

@@ -23,18 +23,15 @@ func LoadAppConfig() *AppConfig {
 
 	content, err := os.ReadFile(path)
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			// TODO debug is not working because of different log level at startup
-			logger.Debug("config for dotx not found")
-		} else {
-			logger.Warn("error while reading dotx config", "error", err)
+		if !errors.Is(err, os.ErrNotExist) {
+			logger.Warn("error while reading config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, config); err != nil {
-		logger.Warn("unable to unmarshal dotx config", "error", err)
+		logger.Warn("invalid config", "error", err)
 	}
 
 	return config
@@ -44,8 +41,6 @@ func ensureAppConfigDir() {
 	appDir := fs.NewPath(appDirPath())
 	if err := fs.Mkdir(appDir); err != nil {
 		logger.Error("error while creating dotx config dir", "error", err)
-	} else {
-		logger.Debug("dotx config dir created or already existent", "dir", appDir.AbsPath())
 	}
 }
 
