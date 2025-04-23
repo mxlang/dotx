@@ -9,7 +9,7 @@ import (
 func newCmdPull(dotx dotx.App) *cobra.Command {
 	return &cobra.Command{
 		Use:   "pull",
-		Short: "",
+		Short: "Pull changes from your remote dotfiles repository",
 		Args:  cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
