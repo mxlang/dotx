@@ -18,7 +18,8 @@ func Execute(dotx dotx.App) {
 func newCmdRoot(dotx dotx.App) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "dotx",
-		Short: "The next generation dotfile manager",
+		Short: "A modern dotfile manager for tracking and syncing configuration files",
+		Long:  "dotx helps you manage, version control, and synchronize your configuration files (dotfiles) across multiple systems",
 		Args:  cobra.NoArgs,
 
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {

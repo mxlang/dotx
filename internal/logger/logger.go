@@ -3,7 +3,7 @@ package logger
 import (
 	"os"
 
-	l "github.com/charmbracelet/log"
+	charmLogger "github.com/charmbracelet/log"
 )
 
 type Level int
@@ -15,7 +15,7 @@ const (
 	ErrorLevel
 )
 
-var log *l.Logger
+var log *charmLogger.Logger
 
 func Debug(msg any, keys ...any) {
 	log.Debug(msg, keys...)
@@ -37,19 +37,19 @@ func Error(msg any, keys ...any) {
 func SetLevel(level Level) {
 	switch level {
 	case DebugLevel:
-		log.SetLevel(l.DebugLevel)
+		log.SetLevel(charmLogger.DebugLevel)
 	case InfoLevel:
-		log.SetLevel(l.InfoLevel)
+		log.SetLevel(charmLogger.InfoLevel)
 	case WarnLevel:
-		log.SetLevel(l.WarnLevel)
+		log.SetLevel(charmLogger.WarnLevel)
 	case ErrorLevel:
-		log.SetLevel(l.ErrorLevel)
+		log.SetLevel(charmLogger.ErrorLevel)
 	}
 }
 
 func init() {
-	log = l.New(os.Stderr)
+	log = charmLogger.New(os.Stderr)
 	log.SetReportTimestamp(false)
 	log.SetReportCaller(false)
-	log.SetLevel(l.InfoLevel)
+	log.SetLevel(charmLogger.InfoLevel)
 }

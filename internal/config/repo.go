@@ -8,6 +8,7 @@ import (
 	"github.com/mxlang/dotx/internal/logger"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type RepoConfig struct {
@@ -29,7 +30,17 @@ func (r *RepoConfig) DotfileExists(source fs.Path) bool {
 	return false
 }
 
-func (r *RepoConfig) WriteDotfile(dotfile Dotfile) error {
+func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
+	// normalize paths
+	home, _ := os.UserHomeDir()
+	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
+	destinationPath := strings.Replace(dest.AbsPath(), RepoDirPath(), "", 1)
+
+	dotfile := Dotfile{
+		Source:      destinationPath,
+		Destination: sourcePath,
+	}
+
 	r.Dotfiles = append(r.Dotfiles, dotfile)
 
 	config, err := yaml.Marshal(r)
@@ -52,17 +63,15 @@ func LoadRepoConfig() *RepoConfig {
 
 	content, err := os.ReadFile(path)
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			logger.Debug("config for dotfiles repo not found")
-		} else {
-			logger.Warn("error while reading dotfiles repo config", "error", err)
+		if !errors.Is(err, os.ErrNotExist) {
+			logger.Warn("error while reading dotfiles config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, config); err != nil {
-		logger.Warn("unable to unmarshal dotfiles repo config", "error", err)
+		logger.Warn("invalid dotfiles config", "error", err)
 	}
 
 	return config
@@ -72,8 +81,6 @@ func ensureRepoConfigDir() {
 	repoDir := fs.NewPath(RepoDirPath())
 	if err := fs.Mkdir(repoDir); err != nil {
 		logger.Error("error while creating dotfiles repo dir", "error", err)
-	} else {
-		logger.Debug("dotfiles repo dir created or already existent", "dir", repoDir.AbsPath())
 	}
 }
 

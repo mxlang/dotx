@@ -38,5 +38,9 @@ func Symlink(source Path, dest Path) error {
 }
 
 func Mkdir(path Path) error {
-	return os.MkdirAll(path.absPath, 0777)
+	if err := os.MkdirAll(path.absPath, 0777); err != nil {
+		return errors.New("failed to create directory")
+	}
+
+	return nil
 }
