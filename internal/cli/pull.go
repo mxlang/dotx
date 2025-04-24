@@ -11,8 +11,9 @@ func newCmdPull(dotx dotx.App) *cobra.Command {
 		Use:     "pull",
 		Short:   "Update local dotfiles by pulling changes from remote repository",
 		Long:    "Fetch and merge the latest changes from your remote dotfiles repository to keep your local copy up-to-date",
-		Args:    cobra.NoArgs,
-		Example: "  dotx sync pull",
+		Example: `  dotx sync pull`,
+
+		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.PullRemoteRepo(); err != nil {

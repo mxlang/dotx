@@ -11,9 +11,10 @@ func newCmdAdd(dotx dotx.App) *cobra.Command {
 		Use:   "add",
 		Short: "Add a file or directory to your dotfiles repository",
 		Long:  "Track a configuration file or directory in your dotfiles repository by creating a symlink to its original location",
-		Args:  cobra.ExactArgs(1),
-		Example: "  dotx add ~/.bashrc\n" +
-			"  dotx add ~/.config/nvim",
+		Example: `  dotx add ~/.bashrc
+  dotx add ~/.config/nvim`,
+
+		Args: cobra.ExactArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.AddDotfile(args[0]); err != nil {

@@ -10,10 +10,11 @@ func newCmdSync(dotx dotx.App) *cobra.Command {
 		Use:   "sync",
 		Short: "Manage Git operations for your dotfiles repository",
 		Long:  "Perform Git operations such as initializing, pulling, and pushing changes to synchronize your dotfiles across systems",
-		Args:  cobra.NoArgs,
-		Example: "  dotx sync init https://github.com/username/dotfiles.git\n" +
-			"  dotx sync pull\n" +
-			"  dotx sync push -m \"Update nvim configuration\"",
+		Example: `  dotx sync init https://github.com/username/dotfiles.git
+  dotx sync pull
+  dotx sync push -m "Update nvim configuration"`,
+
+		Args: cobra.NoArgs,
 	}
 
 	syncCmd.AddCommand(

@@ -11,8 +11,9 @@ func newCmdInit(dotx dotx.App) *cobra.Command {
 		Use:     "init",
 		Short:   "Initialize by cloning a remote dotfiles repository",
 		Long:    "Set up your dotfiles environment by cloning an existing Git repository containing your configuration files",
-		Args:    cobra.ExactArgs(1),
-		Example: "  dotx sync init https://github.com/username/dotfiles.git",
+		Example: `  dotx sync init https://github.com/username/dotfiles.git`,
+
+		Args: cobra.ExactArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.CloneRemoteRepo(args[0]); err != nil {

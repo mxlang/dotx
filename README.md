@@ -45,7 +45,7 @@ cd dotx
 go install ./cmd/dotx
 ```
 
-### Go Tooling
+### Go
 
 ```bash
 go install github.com/mxlang/dotx.git

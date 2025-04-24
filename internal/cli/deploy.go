@@ -11,8 +11,9 @@ func newCmdDeploy(dotx dotx.App) *cobra.Command {
 		Use:     "deploy",
 		Short:   "Deploy your dotfiles to the current system",
 		Long:    "Create symbolic links from your dotfiles repository to their appropriate locations in your home directory",
-		Args:    cobra.NoArgs,
-		Example: "  dotx deploy",
+		Example: `  dotx deploy`,
+
+		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.DeployDotfiles(); err != nil {
