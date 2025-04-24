@@ -82,22 +82,23 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.78808594"
-     inkscape:cx="603.36059"
-     inkscape:cy="151.63321"
+     inkscape:zoom="2"
+     inkscape:cx="228.75"
+     inkscape:cy="173.25"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
-     inkscape:window-x="-8"
+     inkscape:window-x="1912"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2" />
+     inkscape:current-layer="layer2"
+     showguides="false" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Hintergrund"
      style="display:inline;fill:#313244;fill-opacity:1">
     <rect
-       style="fill:#313244;fill-opacity:1;stroke:none;stroke-width:0.499917;stroke-opacity:1"
+       style="fill:#24293b;fill-opacity:1;stroke:none;stroke-width:0.499917;stroke-opacity:1"
        id="rect38"
        width="804.48059"
        height="361.63565"
@@ -112,7 +113,7 @@
      transform="translate(-7.7916344,37.684323)">
     <g
        id="g35"
-       transform="matrix(0.67276227,0,0,0.64572605,-69.089483,-101.7838)">
+       transform="matrix(0.58008211,0,0,0.56002304,-52.125453,-70.049682)">
       <image
          width="1024"
          height="1024"
@@ -148,16 +149,16 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:96px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#cdd6f4;fill-opacity:1;stroke:none;stroke-width:15.9041;stroke-opacity:1"
-       x="522.93463"
-       y="177.41678"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:153.6px;font-family:Calibri;-inkscape-font-specification:'Calibri Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#cdd6f4;fill-opacity:1;stroke:none;stroke-width:15.9041;stroke-opacity:1"
+       x="468.11502"
+       y="192.9324"
        id="text35"
        transform="scale(1.0308903,0.97003531)"
        inkscape:label="Schrift"><tspan
          sodipodi:role="line"
-         x="522.93463"
-         y="177.41678"
+         x="468.11502"
+         y="192.9324"
          id="tspan37"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:96px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#cdd6f4;fill-opacity:1;stroke-width:15.9041">dotx</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:153.6px;font-family:Calibri;-inkscape-font-specification:'Calibri Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke-width:15.9041">dotx</tspan></text>
   </g>
 </svg>
