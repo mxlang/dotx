@@ -13,7 +13,7 @@ func newCmdSync(dotx dotx.App) *cobra.Command {
 		Args:  cobra.NoArgs,
 		Example: "  dotx sync init https://github.com/username/dotfiles.git\n" +
 			"  dotx sync pull\n" +
-			"  dotx sync push -m \"Update vim configuration\"",
+			"  dotx sync push -m \"Update nvim configuration\"",
 	}
 
 	syncCmd.AddCommand(
