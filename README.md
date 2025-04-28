@@ -1,10 +1,9 @@
 <div align="center">
     <p>
         <picture>
-            <img alt="dotx logo" src="./docs/assets/logo.svg">
+            <img width="250" alt="dotx logo" src="./docs/assets/logo.svg">
         </picture>
     </p>
-    <h1>dotx</h1>
     <p>
         <b>A modern dotfile manager for tracking and syncing configuration files</b>
     </p>
