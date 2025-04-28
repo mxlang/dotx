@@ -1,7 +1,7 @@
 <div align="center">
     <p>
         <picture>
-            <img width="250" alt="dotx logo" src="./docs/assets/logo.svg">
+            <img width="500" alt="dotx logo" src="./docs/assets/logo.svg">
         </picture>
     </p>
     <p>
