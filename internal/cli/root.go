@@ -30,7 +30,7 @@ func newCmdRoot(dotx dotx.App) *cobra.Command {
 	}
 
 	rootCmd.AddCommand(
-		newCmdVersion(dotx),
+		newCmdVersion("0.1.0"),
 		newCmdAdd(dotx),
 		newCmdDeploy(dotx),
 		newCmdSync(dotx),

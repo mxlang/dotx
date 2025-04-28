@@ -2,11 +2,10 @@ package cli
 
 import (
 	"fmt"
-	"github.com/mxlang/dotx/internal/dotx"
 	"github.com/spf13/cobra"
 )
 
-func newCmdVersion(dotx dotx.App) *cobra.Command {
+func newCmdVersion(version string) *cobra.Command {
 	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print dotx version",
@@ -15,7 +14,7 @@ func newCmdVersion(dotx dotx.App) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("dotx version 0.1.0")
+			fmt.Printf("dotx version %s\n", version)
 		},
 	}
 
