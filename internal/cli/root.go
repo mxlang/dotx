@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/mxlang/dotx/internal/logger"
 	"os"
 
@@ -16,21 +17,27 @@ func Execute(dotx dotx.App) {
 }
 
 func newCmdRoot(dotx dotx.App) *cobra.Command {
+	var verbose bool
+
 	rootCmd := &cobra.Command{
-		Use:   "dotx",
-		Short: "A modern dotfile manager for tracking and syncing configuration files",
-		Long:  "dotx helps you manage, version control, and synchronize your configuration files (dotfiles) across multiple systems",
-		Args:  cobra.NoArgs,
+		Use:     "dotx",
+		Short:   "A modern dotfile manager for tracking and syncing configuration files",
+		Long:    "dotx helps you manage, version control, and synchronize your configuration files (dotfiles) across multiple systems",
+		Version: dotx.Version,
+
+		Args: cobra.NoArgs,
 
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			if dotx.AppConfig.Verbose {
+			if verbose {
 				logger.SetLevel(logger.DebugLevel)
+				fmt.Println("more verbose output")
 			}
 		},
 	}
 
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", dotx.AppConfig.Verbose, "enable verbose output")
+
 	rootCmd.AddCommand(
-		newCmdVersion("0.1.0"),
 		newCmdAdd(dotx),
 		newCmdDeploy(dotx),
 		newCmdSync(dotx),

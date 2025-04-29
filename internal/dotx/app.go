@@ -9,12 +9,15 @@ import (
 )
 
 type App struct {
+	Version string
+
 	AppConfig  *config.AppConfig
 	repoConfig *config.RepoConfig
 }
 
-func New(appConfig *config.AppConfig, repoConfig *config.RepoConfig) App {
+func New(version string, appConfig *config.AppConfig, repoConfig *config.RepoConfig) App {
 	return App{
+		Version:    version,
 		AppConfig:  appConfig,
 		repoConfig: repoConfig,
 	}

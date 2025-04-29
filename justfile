@@ -1,8 +1,16 @@
+MAIN_PACKAGE := "./cmd/dotx"
+
+VERSION := "$(git rev-parse --short HEAD)-dev"
+LD_FLAGS := "-s -X main.version=" + VERSION
+
 run *PARAMS: build
-    @./bin/dotx {{PARAMS}}
+	@./bin/dotx {{PARAMS}}
 
 build:
-	@go build -o bin/dotx ./cmd/dotx
+	@go build -ldflags="{{LD_FLAGS}}" -o bin/dotx {{MAIN_PACKAGE}}
+
+install:
+	@go install -ldflags="{{LD_FLAGS}}" {{MAIN_PACKAGE}}
 
 test:
 	@go test ./...
@@ -11,7 +19,4 @@ cover:
 	@go test -cover ./...
 
 tidy:
-    @go mod tidy
-
-install:
-	@go install ./cmd/dotx
+	@go mod tidy
