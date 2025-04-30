@@ -96,6 +96,8 @@ dotx sync push -m "Update nvim configuration"
 
 ## Commands
 
+All commands support the `--verbose` (`-v`) flag to enable more detailed output, which can be helpful for debugging.
+
 ### `add`
 
 Track a configuration file or directory in your dotfiles repository by creating a symlink to its original location.
@@ -169,6 +171,8 @@ verbose: true                            # Enable verbose logging
 commitMessage: "default commit message"  # Default commit message for sync push
 ```
 
+You can create or edit this file manually to customize dotx's behavior. If the file doesn't exist, dotx will use default values.
+
 ### Repository Configuration
 
 Located at `$XDG_DATA_HOME/dotx/dotfiles/dotx.yaml` (typically `~/.local/share/dotx/dotfiles/dotx.yaml` on Linux and `~/Library/Application Support/dotx/dotfiles/dotx.yaml` on macOS):
@@ -181,7 +185,7 @@ dotfiles:
     destination: "$HOME/.config/nvim"
 ```
 
-This file is automatically updated when you add new dotfiles.
+This file is automatically updated when you add new dotfiles using the `add` command.
 
 ## How It Works
 

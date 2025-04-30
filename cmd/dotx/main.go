@@ -6,8 +6,11 @@ import (
 	"github.com/mxlang/dotx/internal/dotx"
 )
 
+var version = "dev"
+
 func main() {
 	app := dotx.New(
+		version,
 		config.LoadAppConfig(),
 		config.LoadRepoConfig(),
 	)
