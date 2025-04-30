@@ -1,24 +1,29 @@
 <div align="center">
     <p>
-        <picture>
-            <img alt="dotx logo" src="./docs/assets/logo.svg">
-        </picture>
+        <img width="180" alt="dotx logo" src="./docs/assets/logo.svg">
     </p>
-    <h1>dotx</h1>
+    <h1>✨ dotx ✨</h1>
     <p>
         <b>A modern dotfile manager for tracking and syncing configuration files</b>
     </p>
     <p>
-        <a href="#installation">Installation</a> •
-        <a href="#usage">Usage</a> •
-        <a href="#commands">Commands</a> •
-        <a href="#configuration">Configuration</a> •
-        <a href="#license">License</a>
+        <a href="https://github.com/mxlang/dotx/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License"></a>
+        <img src="https://img.shields.io/badge/status-under%20development-yellow.svg" alt="Status">
+        <img src="https://img.shields.io/badge/platform-Linux%20%7C%20macOS-lightgrey.svg" alt="Platform">
+    </p>
+    <br>
+    <p>
+        <a href="#installation"><b>Installation</b></a> •
+        <a href="#usage"><b>Usage</b></a> •
+        <a href="#commands"><b>Commands</b></a> •
+        <a href="#configuration"><b>Configuration</b></a> •
+        <a href="#license"><b>License</b></a>
     </p>
     <hr>
     <p>
         <h3>⚠️ This project is still under development ⚠️</h3>
     </p>
+    <br>
 </div>
 
 ## Overview
