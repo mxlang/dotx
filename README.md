@@ -13,10 +13,12 @@
     </p>
     <br>
     <p>
+        <a href="#overview"><b>Overview</b></a> •
         <a href="#installation"><b>Installation</b></a> •
         <a href="#usage"><b>Usage</b></a> •
         <a href="#commands"><b>Commands</b></a> •
         <a href="#configuration"><b>Configuration</b></a> •
+        <a href="#how-it-works"><b>How It Works</b></a> •
         <a href="#license"><b>License</b></a>
     </p>
     <hr>
@@ -30,12 +32,18 @@
 
 **dotx** helps you manage, version control, and synchronize your configuration files (dotfiles) across multiple systems. It provides a simple and intuitive CLI to:
 
-- Track configuration files in a Git repository
-- Deploy your dotfiles to new systems
-- Synchronize changes across multiple machines
-- Maintain a clean and organized dotfiles setup
+- **Track** configuration files in a Git repository
+- **Deploy** your dotfiles to new systems
+- **Synchronize** changes across multiple machines
+- **Maintain** a clean and organized dotfiles setup
 
 ## Installation
+
+### Using Go
+
+```bash
+go install github.com/mxlang/dotx/cmd/dotx@latest
+```
 
 ### From Source
 
@@ -48,12 +56,6 @@ cd dotx
 
 # Build and install
 go install ./cmd/dotx
-```
-
-### Go
-
-```bash
-go install github.com/mxlang/dotx.git
 ```
 
 ## Usage
@@ -189,10 +191,35 @@ This file is automatically updated when you add new dotfiles using the `add` com
 
 ## How It Works
 
-1. When you add a file with `dotx add`, the original file is moved to the dotfiles repository.
-2. A symbolic link is created at the original location, pointing to the file in the repository.
-3. The mapping between the repository file and the original location is stored in the configuration.
-4. When you deploy with `dotx deploy`, symbolic links are created based on this mapping.
+### File Management
+
+1. When you add a file with `dotx add`:
+   - The original file is moved to the dotfiles repository
+   - A symbolic link is created at the original location, pointing to the file in the repository
+   - The mapping between the repository file and the original location is stored in the configuration
+
+2. When you deploy with `dotx deploy`:
+   - Symbolic links are created based on the mappings in the configuration
+   - If a file already exists at the target location, you'll be prompted to overwrite it
+
+### Repository Structure
+
+```
+~/.local/share/dotx/dotfiles/  # Default repository location
+├── .bashrc                    # Your actual configuration files
+├── .vimrc
+├── .config/
+│   └── nvim/                  # Directories are preserved
+│       ├── init.vim
+│       └── ...
+└── dotx.yaml                  # Repository configuration file
+```
+
+### Synchronization
+
+- `dotx sync pull` fetches changes from your remote repository
+- `dotx sync push` commits and pushes your local changes to the remote
+- This allows you to keep your dotfiles in sync across multiple machines
 
 ## License
 
