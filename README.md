@@ -98,7 +98,10 @@ dotx sync push -m "Update nvim configuration"
 
 ## Commands
 
-All commands support the `--verbose` (`-v`) flag to enable more detailed output, which can be helpful for debugging.
+All commands support the following flags:
+
+- `--verbose` (`-v`): Enable more detailed output, which can be helpful for debugging.
+- `--version`: Display the current version information for dotx.
 
 ### `add`
 
