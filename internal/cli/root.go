@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"github.com/mxlang/dotx/internal/logger"
 	"os"
 
@@ -30,7 +29,6 @@ func newCmdRoot(dotx dotx.App) *cobra.Command {
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			if verbose {
 				logger.SetLevel(logger.DebugLevel)
-				fmt.Println("more verbose output")
 			}
 		},
 	}

@@ -5,6 +5,8 @@ import (
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/git"
+	"github.com/mxlang/dotx/internal/logger"
+	"github.com/mxlang/dotx/internal/tui"
 	"path/filepath"
 )
 
@@ -55,10 +57,17 @@ func (a App) DeployDotfiles() error {
 
 		if dest.Exists() {
 			if dest.IsSymlink() && dest.SymlinkPath() == source.AbsPath() {
-				// TODO log warning instead of return error
-				return errors.New("dotfile already deployed with dotx")
+				logger.Debug("dotfile already deployed with dotx", "dotfile", source.Filename())
+				continue
 			} else {
-				// TODO ask for overwrite with a TUI
+				overwrite := tui.Confirm("File already exists. Overwrite?")
+				if !overwrite {
+					continue
+				}
+
+				if err := fs.Delete(dest); err != nil {
+					return err
+				}
 			}
 		}
 
