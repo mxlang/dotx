@@ -45,6 +45,7 @@ func TestAddDotfile(t *testing.T) {
 	t.Cleanup(cleanupTest)
 
 	dotx := New(
+		"dev",
 		config.LoadAppConfig(),
 		config.LoadRepoConfig(),
 	)
@@ -70,6 +71,7 @@ func TestAddDotfileAlreadyExists(t *testing.T) {
 	t.Cleanup(cleanupTest)
 
 	dotx := New(
+		"dev",
 		config.LoadAppConfig(),
 		config.LoadRepoConfig(),
 	)
@@ -94,6 +96,7 @@ func TestAddDotfileMissingSourcePath(t *testing.T) {
 	t.Cleanup(cleanupTest)
 
 	dotx := New(
+		"dev",
 		config.LoadAppConfig(),
 		config.LoadRepoConfig(),
 	)

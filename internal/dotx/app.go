@@ -2,6 +2,7 @@ package dotx
 
 import (
 	"errors"
+	"fmt"
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/git"
@@ -59,22 +60,30 @@ func (a App) DeployDotfiles() error {
 			if dest.IsSymlink() && dest.SymlinkPath() == source.AbsPath() {
 				logger.Debug("dotfile already deployed with dotx", "dotfile", source.Filename())
 				continue
-			} else {
-				overwrite := tui.Confirm("File already exists. Overwrite?")
-				if !overwrite {
-					continue
-				}
+			}
 
-				if err := fs.Delete(dest); err != nil {
-					return err
-				}
+			title := "File already exists. Overwrite?"
+			if dest.IsDir() {
+				title = "Directory already exists. Overwrite?"
+			}
+
+			overwrite := tui.Confirm(
+				title,
+				dest.AbsPath(),
+			)
+			if !overwrite {
+				continue
+			}
+
+			if err := fs.Delete(dest); err != nil {
+				return err
 			}
 		}
 
-		// create base dir if not exists
+		// Ensure parent directory exists
 		dir := fs.NewPath(dest.Dir())
 		if err := fs.Mkdir(dir); err != nil {
-			return err
+			return fmt.Errorf("could not create parent directory for %s: %w", dest.AbsPath(), err)
 		}
 
 		if err := fs.Symlink(source, dest); err != nil {
