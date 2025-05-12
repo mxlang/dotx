@@ -60,13 +60,13 @@ func (a App) DeployDotfiles() error {
 				logger.Debug("dotfile already deployed with dotx", "dotfile", source.Filename())
 				continue
 			} else {
-				overwrite := tui.Confirm("Are you sure?", "")
+				overwrite := tui.Confirm("File already exists. Overwrite?")
 				if !overwrite {
 					continue
 				}
 
 				if err := fs.Delete(dest); err != nil {
-
+					return err
 				}
 			}
 		}
