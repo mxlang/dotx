@@ -44,3 +44,7 @@ func Mkdir(path Path) error {
 
 	return nil
 }
+
+func Delete(path Path) error {
+	return os.Remove(path.absPath)
+}

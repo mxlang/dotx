@@ -5,6 +5,7 @@ import (
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/git"
+	"github.com/mxlang/dotx/internal/tui"
 	"path/filepath"
 )
 
@@ -58,7 +59,14 @@ func (a App) DeployDotfiles() error {
 				// TODO log warning instead of return error
 				return errors.New("dotfile already deployed with dotx")
 			} else {
-				// TODO ask for overwrite with a TUI
+				overwrite := tui.Confirm("Are you sure?", "")
+				if !overwrite {
+					continue
+				}
+
+				if err := fs.Delete(dest); err != nil {
+
+				}
 			}
 		}
 
