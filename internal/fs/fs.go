@@ -15,7 +15,7 @@ func Move(source Path, dest Path) error {
 	}
 
 	if err := os.Rename(source.absPath, dest.absPath); err != nil {
-		return fmt.Errorf("failed to move: %w", err)
+		return err
 	}
 
 	return nil
@@ -31,7 +31,7 @@ func Symlink(source Path, dest Path) error {
 	}
 
 	if err := os.Symlink(source.absPath, dest.absPath); err != nil {
-		return fmt.Errorf("failed to create symlink: %w", err)
+		return err
 	}
 
 	return nil
@@ -39,7 +39,7 @@ func Symlink(source Path, dest Path) error {
 
 func Mkdir(path Path) error {
 	if err := os.MkdirAll(path.absPath, 0777); err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
+		return err
 	}
 
 	return nil
@@ -51,7 +51,7 @@ func Delete(path Path) error {
 	}
 
 	if err := os.Remove(path.absPath); err != nil {
-		return fmt.Errorf("failed to delete: %w", err)
+		return err
 	}
 
 	return nil

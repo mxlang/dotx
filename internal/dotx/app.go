@@ -37,15 +37,15 @@ func (a App) AddDotfile(path string) error {
 	}
 
 	if err := fs.Move(source, dest); err != nil {
-		return err
+		return fmt.Errorf("failed to move: %w", err)
 	}
 
 	if err := fs.Symlink(dest, source); err != nil {
-		return err
+		return fmt.Errorf("failed to create symlink: %w", err)
 	}
 
 	if err := a.repoConfig.WriteDotfile(source, dest); err != nil {
-		return err
+		return fmt.Errorf("failed to write repository config: %w", err)
 	}
 
 	return nil
@@ -76,7 +76,7 @@ func (a App) DeployDotfiles() error {
 			}
 
 			if err := fs.Delete(dest); err != nil {
-				return err
+				return fmt.Errorf("failed to delete: %w", err)
 			}
 		}
 
@@ -87,7 +87,7 @@ func (a App) DeployDotfiles() error {
 		}
 
 		if err := fs.Symlink(source, dest); err != nil {
-			return err
+			return fmt.Errorf("failed to create symlink: %w", err)
 		}
 	}
 
@@ -95,24 +95,32 @@ func (a App) DeployDotfiles() error {
 }
 
 func (a App) CloneRemoteRepo(remoteRepo string) error {
-	return git.Clone(remoteRepo)
+	if err := git.Clone(remoteRepo); err != nil {
+		return fmt.Errorf("failed to clone remote repository: %w", err)
+	}
+
+	return nil
 }
 
 func (a App) PullRemoteRepo() error {
-	return git.Pull()
+	if err := git.Pull(); err != nil {
+		return fmt.Errorf("failed to pull remote repository: %w", err)
+	}
+
+	return nil
 }
 
 func (a App) PushRemoteRepo(commitMessage string) error {
 	if err := git.Add("."); err != nil {
-		return err
+		return fmt.Errorf("failed to add changes: %w", err)
 	}
 
 	if err := git.Commit(commitMessage); err != nil {
-		return err
+		return fmt.Errorf("failed to commit changes: %w", err)
 	}
 
 	if err := git.Push(); err != nil {
-		return err
+		return fmt.Errorf("failed to push changes: %w", err)
 	}
 
 	return nil

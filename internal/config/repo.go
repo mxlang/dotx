@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"github.com/adrg/xdg"
 	"github.com/goccy/go-yaml"
 	"github.com/mxlang/dotx/internal/fs"
@@ -45,11 +46,11 @@ func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
 
 	config, err := yaml.Marshal(r)
 	if err != nil {
-		return errors.New("unable to marshal dotfiles repo config")
+		return fmt.Errorf("unable to marshal dotfiles repo config: %w", err)
 	}
 
 	if err := os.WriteFile(repoConfigFilePath(), config, 0644); err != nil {
-		return errors.New("unable to write dotfiles repo config")
+		return fmt.Errorf("unable to write dotfiles repo config: %w", err)
 	}
 
 	return nil
