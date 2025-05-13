@@ -4,17 +4,16 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func Confirm(title string, description string) bool {
+func Confirm(title string, description string) (bool, error) {
 	confirm := false
 	form := huh.NewConfirm().
 		Title(title).
 		Description(description).
 		Value(&confirm)
 
-	err := form.Run()
-	if err != nil {
-		return false
+	if err := form.Run(); err != nil {
+		return false, err
 	}
 
-	return confirm
+	return confirm, nil
 }

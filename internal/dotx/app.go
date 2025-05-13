@@ -67,10 +67,15 @@ func (a App) DeployDotfiles() error {
 				title = "Directory already exists. Overwrite?"
 			}
 
-			overwrite := tui.Confirm(
+			overwrite, err := tui.Confirm(
 				title,
 				dest.AbsPath(),
 			)
+
+			if err != nil {
+				return fmt.Errorf("failed to render TUI: %w", err)
+			}
+
 			if !overwrite {
 				continue
 			}
