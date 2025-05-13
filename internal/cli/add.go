@@ -21,7 +21,7 @@ func newCmdAdd(dotx dotx.App) *cobra.Command {
 				logger.Error("failed to add dotfile", "error", err)
 			}
 
-			logger.Info("successfully added to dotfiles repo")
+			logger.Info("successfully added to dotfiles repository")
 		},
 	}
 }

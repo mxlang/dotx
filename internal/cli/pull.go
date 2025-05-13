@@ -17,10 +17,10 @@ func newCmdPull(dotx dotx.App) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.PullRemoteRepo(); err != nil {
-				logger.Error("failed to pull from remote repo", "error", err)
+				logger.Error("failed to pull from remote repository", "error", err)
 			}
 
-			logger.Info("successfully pulled from remote repo")
+			logger.Info("successfully pulled from remote repository")
 		},
 	}
 }

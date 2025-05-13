@@ -20,10 +20,10 @@ func newCmdPush(dotx dotx.App) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.PushRemoteRepo(commitMessage); err != nil {
-				logger.Error("failed to push to remote repo", "error", err)
+				logger.Error("failed to push to remote repository", "error", err)
 			}
 
-			logger.Info("successfully pushed to remote repo")
+			logger.Info("successfully pushed to remote repository")
 		},
 	}
 

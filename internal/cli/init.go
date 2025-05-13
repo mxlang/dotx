@@ -17,10 +17,10 @@ func newCmdInit(dotx dotx.App) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := dotx.CloneRemoteRepo(args[0]); err != nil {
-				logger.Error("failed to clone remote repo", "error", err)
+				logger.Error("failed to clone remote repository", "error", err)
 			}
 
-			logger.Info("successfully cloned remote repo")
+			logger.Info("successfully cloned remote repository")
 		},
 	}
 }
