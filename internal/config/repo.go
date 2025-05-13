@@ -46,11 +46,11 @@ func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
 
 	config, err := yaml.Marshal(r)
 	if err != nil {
-		return fmt.Errorf("unable to marshal dotfiles repo config: %w", err)
+		return fmt.Errorf("unable to marshal repository config: %w", err)
 	}
 
 	if err := os.WriteFile(repoConfigFilePath(), config, 0644); err != nil {
-		return fmt.Errorf("unable to write dotfiles repo config: %w", err)
+		return fmt.Errorf("unable to write repository config: %w", err)
 	}
 
 	return nil
@@ -65,14 +65,14 @@ func LoadRepoConfig() *RepoConfig {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			logger.Warn("error while reading dotfiles config", "error", err)
+			logger.Warn("error while reading repository config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, config); err != nil {
-		logger.Warn("invalid dotfiles config", "error", err)
+		logger.Warn("invalid repository config", "error", err)
 	}
 
 	return config
@@ -81,7 +81,7 @@ func LoadRepoConfig() *RepoConfig {
 func ensureRepoConfigDir() {
 	repoDir := fs.NewPath(RepoDirPath())
 	if err := fs.Mkdir(repoDir); err != nil {
-		logger.Error("error while creating dotfiles repo dir", "error", err)
+		logger.Error("error while creating repository directory", "error", err)
 	}
 }
 

@@ -40,7 +40,7 @@ func LoadAppConfig() *AppConfig {
 func ensureAppConfigDir() {
 	appDir := fs.NewPath(appDirPath())
 	if err := fs.Mkdir(appDir); err != nil {
-		logger.Error("error while creating dotx config dir", "error", err)
+		logger.Error("error while creating dotx config directory", "error", err)
 	}
 }
 
