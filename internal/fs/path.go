@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type Path struct {
@@ -76,15 +75,17 @@ func (p Path) SymlinkPath() string {
 }
 
 func normalizePath(path string) string {
-	if strings.Contains(path, "$HOME") {
-		path = os.ExpandEnv(path)
-	}
+	// Expand all environment variables in the path
+	path = os.ExpandEnv(path)
 
-	if filepath.IsAbs(path) {
-		path = filepath.Clean(path)
-	}
+	// Clean the path to remove any unnecessary elements
+	path = filepath.Clean(path)
 
-	path, _ = filepath.Abs(path)
+	// Convert to an absolute path
+	absPath, err := filepath.Abs(path)
+	if err == nil {
+		path = absPath
+	}
 
 	return path
 }
