@@ -1,28 +1,28 @@
 package cli
 
 import (
+	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/logger"
 	"os"
 
-	"github.com/mxlang/dotx/internal/dotx"
 	"github.com/spf13/cobra"
 )
 
-func Execute(dotx dotx.App) {
-	err := newCmdRoot(dotx).Execute()
+func Execute(cfg config.Config) {
+	err := newCmdRoot(cfg).Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
-func newCmdRoot(dotx dotx.App) *cobra.Command {
+func newCmdRoot(cfg config.Config) *cobra.Command {
 	var verbose bool
 
 	rootCmd := &cobra.Command{
 		Use:     "dotx",
 		Short:   "A modern dotfile manager for tracking and syncing configuration files",
 		Long:    "dotx helps you manage, version control, and synchronize your configuration files (dotfiles) across multiple systems",
-		Version: dotx.Version,
+		Version: "",
 
 		Args: cobra.NoArgs,
 
@@ -33,12 +33,12 @@ func newCmdRoot(dotx dotx.App) *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", dotx.AppConfig.Verbose, "enable verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", cfg.App.Verbose, "enable verbose output")
 
 	rootCmd.AddCommand(
-		newCmdAdd(dotx),
-		newCmdDeploy(dotx),
-		newCmdSync(dotx),
+		newCmdAdd(cfg),
+		newCmdDeploy(cfg),
+		newCmdSync(cfg),
 	)
 
 	return rootCmd

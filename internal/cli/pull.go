@@ -1,12 +1,13 @@
 package cli
 
 import (
-	"github.com/mxlang/dotx/internal/dotx"
+	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
-func newCmdPull(dotx dotx.App) *cobra.Command {
+func newCmdPull(cfg config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "pull",
 		Short:   "Update local dotfiles by pulling changes from remote repository",
@@ -16,8 +17,8 @@ func newCmdPull(dotx dotx.App) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := dotx.PullRemoteRepo(); err != nil {
-				logger.Error("failed to pull from remote repository", "error", err)
+			if err := git.Pull(); err != nil {
+				logger.Error("failed to pull remote repository: %w", err)
 			}
 
 			logger.Info("successfully pulled from remote repository")

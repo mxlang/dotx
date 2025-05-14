@@ -1,14 +1,10 @@
 package config
 
 import (
-	"errors"
 	"fmt"
-	"github.com/adrg/xdg"
 	"github.com/goccy/go-yaml"
 	"github.com/mxlang/dotx/internal/fs"
-	"github.com/mxlang/dotx/internal/logger"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -54,41 +50,4 @@ func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
 	}
 
 	return nil
-}
-
-func LoadRepoConfig() *RepoConfig {
-	ensureRepoConfigDir()
-
-	config := &RepoConfig{}
-	path := repoConfigFilePath()
-
-	content, err := os.ReadFile(path)
-	if err != nil {
-		if !errors.Is(err, os.ErrNotExist) {
-			logger.Warn("error while reading repository config", "error", err)
-		}
-
-		return config
-	}
-
-	if err := yaml.Unmarshal(content, config); err != nil {
-		logger.Warn("invalid repository config", "error", err)
-	}
-
-	return config
-}
-
-func ensureRepoConfigDir() {
-	repoDir := fs.NewPath(RepoDirPath())
-	if err := fs.Mkdir(repoDir); err != nil {
-		logger.Error("error while creating repository directory", "error", err)
-	}
-}
-
-func RepoDirPath() string {
-	return filepath.Join(xdg.DataHome, baseDir, repoDir)
-}
-
-func repoConfigFilePath() string {
-	return filepath.Join(RepoDirPath(), repoConfigFile)
 }
