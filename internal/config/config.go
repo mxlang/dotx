@@ -2,38 +2,15 @@ package config
 
 import (
 	"errors"
-	"github.com/adrg/xdg"
 	"github.com/goccy/go-yaml"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/logger"
 	"os"
-	"path/filepath"
 )
-
-const (
-	baseDir        = "dotx"
-	appConfigFile  = "config.yaml"
-	repoDir        = "dotfiles"
-	repoConfigFile = "dotx.yaml"
-)
-
-func appDirPath() string {
-	return filepath.Join(xdg.ConfigHome, baseDir)
-}
-
-func appConfigFilePath() string {
-	return filepath.Join(appDirPath(), appConfigFile)
-}
-
-func RepoDirPath() string {
-	return filepath.Join(xdg.DataHome, baseDir, repoDir)
-}
-
-func repoConfigFilePath() string {
-	return filepath.Join(RepoDirPath(), repoConfigFile)
-}
 
 type Config struct {
+	RepoPath string
+
 	App  AppConfig
 	Repo RepoConfig
 }
@@ -46,7 +23,7 @@ func Load() Config {
 	}
 
 	// Ensure the repository directory exists
-	repoDir := fs.NewPath(RepoDirPath())
+	repoDir := fs.NewPath(repoDirPath())
 	if err := fs.Mkdir(repoDir); err != nil {
 		logger.Error("error while creating repository directory", "error", err)
 	}
@@ -55,6 +32,8 @@ func Load() Config {
 	repo := loadRepoConfig()
 
 	return Config{
+		RepoPath: repoDirPath(),
+
 		App:  app,
 		Repo: repo,
 	}

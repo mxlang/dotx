@@ -20,10 +20,9 @@ func newCmdAdd(cfg config.Config) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			path := args[0]
-
 			source := fs.NewPath(path)
 			filename := source.Filename()
-			dest := fs.NewPath(filepath.Join(config.RepoDirPath(), filename))
+			dest := fs.NewPath(filepath.Join(cfg.RepoPath, filename))
 
 			// check dotfile already added to repo
 			if cfg.Repo.DotfileExists(source) {

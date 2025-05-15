@@ -17,7 +17,7 @@ func newCmdPull(cfg config.Config) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := git.Pull(); err != nil {
+			if err := git.Pull(cfg.RepoPath); err != nil {
 				logger.Error("failed to pull remote repository: %w", err)
 			}
 

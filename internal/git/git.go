@@ -3,11 +3,10 @@ package git
 import (
 	"errors"
 	"github.com/go-git/go-git/v5"
-	"github.com/mxlang/dotx/internal/config"
 )
 
-func Clone(url string) error {
-	_, err := git.PlainClone(config.RepoDirPath(), false, &git.CloneOptions{
+func Clone(repoDir string, url string) error {
+	_, err := git.PlainClone(repoDir, false, &git.CloneOptions{
 		URL: url,
 	})
 
@@ -18,8 +17,8 @@ func Clone(url string) error {
 	return nil
 }
 
-func Pull() error {
-	repo, err := git.PlainOpen(config.RepoDirPath())
+func Pull(repoDir string) error {
+	repo, err := git.PlainOpen(repoDir)
 	if err != nil {
 		return err
 	}
@@ -40,8 +39,8 @@ func Pull() error {
 	return nil
 }
 
-func Add(path string) error {
-	repo, err := git.PlainOpen(config.RepoDirPath())
+func Add(repoDir string, path string) error {
+	repo, err := git.PlainOpen(repoDir)
 	if err != nil {
 		return err
 	}
@@ -59,8 +58,8 @@ func Add(path string) error {
 	return nil
 }
 
-func Commit(message string) error {
-	repo, err := git.PlainOpen(config.RepoDirPath())
+func Commit(repoDir string, message string) error {
+	repo, err := git.PlainOpen(repoDir)
 	if err != nil {
 		return err
 	}
@@ -78,8 +77,8 @@ func Commit(message string) error {
 	return nil
 }
 
-func Push() error {
-	repo, err := git.PlainOpen(config.RepoDirPath())
+func Push(repoDir string) error {
+	repo, err := git.PlainOpen(repoDir)
 	if err != nil {
 		return err
 	}

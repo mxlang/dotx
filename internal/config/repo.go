@@ -31,7 +31,7 @@ func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
 	// normalize paths
 	home, _ := os.UserHomeDir()
 	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
-	destinationPath := strings.Replace(dest.AbsPath(), RepoDirPath(), "", 1)
+	destinationPath := strings.Replace(dest.AbsPath(), repoDirPath(), "", 1)
 
 	dotfile := Dotfile{
 		Source:      destinationPath,

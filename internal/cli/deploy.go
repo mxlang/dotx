@@ -20,7 +20,7 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			for _, dotfile := range cfg.Repo.Dotfiles {
-				source := fs.NewPath(filepath.Join(config.RepoDirPath(), dotfile.Source))
+				source := fs.NewPath(filepath.Join(cfg.RepoPath, dotfile.Source))
 				dest := fs.NewPath(dotfile.Destination)
 
 				if dest.Exists() {
