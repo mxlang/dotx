@@ -11,8 +11,8 @@ import (
 func newCmdAdd(cfg config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "add",
-		Short: "Add a file or directory to your dotfiles repository",
-		Long:  "Track a configuration file or directory in your dotfiles repository by creating a symlink to its original location",
+		Short: "Add a file or directory to your dotfiles",
+		Long:  "Track a configuration file or directory in your dotfiles by creating a symlink to its original location",
 		Example: `  dotx add ~/.bashrc
   dotx add ~/.config/nvim`,
 
@@ -26,28 +26,28 @@ func newCmdAdd(cfg config.Config) *cobra.Command {
 
 			// check dotfile already added to repo
 			if cfg.Repo.DotfileExists(source) {
-				logger.Error("already exists in repository")
+				logger.Error("already exists in dotfiles")
 			}
 
 			if err := fs.Move(source, dest); err != nil {
 				logger.Error("failed to move", "error", err)
 			} else {
-				logger.Debug("moved from source to destination", "source", source.AbsPath(), "destination", dest.AbsPath())
+				logger.Debug("moved", "from", source.AbsPath(), "to", dest.AbsPath())
 			}
 
 			if err := fs.Symlink(dest, source); err != nil {
 				logger.Error("failed to create symlink", "error", err)
 			} else {
-				logger.Debug("created symlink from destination to source", "destination", dest.AbsPath(), "source", source.AbsPath())
+				logger.Debug("created symlink", "from", dest.AbsPath(), "to", source.AbsPath())
 			}
 
 			if err := cfg.Repo.WriteDotfile(source, dest); err != nil {
-				logger.Error("failed to write repository config", "error", err)
+				logger.Error("failed to write dotfiles config", "error", err)
 			} else {
-				logger.Debug("written to repository config")
+				logger.Debug("written to dotfiles config")
 			}
 
-			logger.Info("successfully added to dotfiles repository")
+			logger.Info("successfully added to dotfiles", "dotfile", source.Filename())
 		},
 	}
 }

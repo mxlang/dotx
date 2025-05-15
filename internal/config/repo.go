@@ -42,11 +42,11 @@ func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
 
 	config, err := yaml.Marshal(r)
 	if err != nil {
-		return fmt.Errorf("unable to marshal repository config: %w", err)
+		return fmt.Errorf("unable to marshal dotfiles config: %w", err)
 	}
 
 	if err := os.WriteFile(repoConfigFilePath(), config, 0644); err != nil {
-		return fmt.Errorf("unable to write repository config: %w", err)
+		return fmt.Errorf("unable to write dotfiles config: %w", err)
 	}
 
 	return nil

@@ -23,22 +23,20 @@ func newCmdPush(cfg config.Config) *cobra.Command {
 			if err := git.Add(cfg.RepoPath, "."); err != nil {
 				logger.Error("failed to add changes", "error", err)
 			} else {
-				logger.Debug("successfully added changes to repository")
+				logger.Debug("successfully added changes to dotfiles")
 			}
 
 			if err := git.Commit(cfg.RepoPath, commitMessage); err != nil {
 				logger.Error("failed to commit changes", "error", err)
 			} else {
-				logger.Debug("successfully committed changes to repository", "message", commitMessage)
+				logger.Debug("successfully committed changes to dotfiles", "message", commitMessage)
 			}
 
 			if err := git.Push(cfg.RepoPath); err != nil {
 				logger.Error("failed to push changes", "error", err)
-			} else {
-				logger.Debug("successfully pushed changes to remote repository")
 			}
 
-			logger.Info("successfully pushed to remote repository")
+			logger.Info("successfully pushed changes to remote dotfiles")
 		},
 	}
 

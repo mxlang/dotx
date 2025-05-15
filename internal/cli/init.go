@@ -44,12 +44,10 @@ func newCmdInit(cfg config.Config) *cobra.Command {
 
 			url := args[0]
 			if err := git.Clone(dir.AbsPath(), url); err != nil {
-				logger.Error("failed to clone remote repository", "error", err)
-			} else {
-				logger.Debug("cloned remote repository from url to path", "url", url, "path", dir.AbsPath())
+				logger.Error("failed to clone remote dotfiles", "error", err)
 			}
 
-			logger.Info("successfully cloned remote repository")
+			logger.Info("successfully cloned remote dotfiles")
 		},
 	}
 }

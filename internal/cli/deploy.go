@@ -13,7 +13,7 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "deploy",
 		Short:   "Deploy your dotfiles to the current system",
-		Long:    "Create symbolic links from your dotfiles repository to their appropriate locations in your home directory",
+		Long:    "Create symbolic links from your dotfiles to their appropriate locations in your home directory",
 		Example: `  dotx deploy`,
 
 		Args: cobra.NoArgs,
@@ -23,7 +23,7 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 				source := fs.NewPath(filepath.Join(cfg.RepoPath, dotfile.Source))
 				dest := fs.NewPath(dotfile.Destination)
 
-				logger.Debug("deploy source to destination", "source", source.AbsPath(), "destination", dest.AbsPath())
+				logger.Debug("deploy", "from", source.AbsPath(), "to", dest.AbsPath())
 
 				if dest.Exists() {
 					if dest.IsSymlink() && dest.SymlinkPath() == source.AbsPath() {
@@ -69,11 +69,13 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 				if err := fs.Symlink(source, dest); err != nil {
 					logger.Error("failed to create symlink", "error", err)
 				} else {
-					logger.Debug("created symlink from source to destination", "source", source.AbsPath(), "destination", dest.AbsPath())
+					logger.Debug("created symlink", "from", source.AbsPath(), "to", dest.AbsPath())
 				}
+
+				logger.Info("successfully deployed", "dotfile", source.Filename())
 			}
 
-			logger.Info("successfully deployed your dotfiles")
+			logger.Info("finished deploying dotfiles")
 		},
 	}
 }

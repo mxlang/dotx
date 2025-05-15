@@ -16,18 +16,6 @@ type Config struct {
 }
 
 func Load() Config {
-	// Ensure the config directory exists
-	appDir := fs.NewPath(appDirPath())
-	if err := fs.Mkdir(appDir); err != nil {
-		logger.Error("error while creating dotx config directory", "error", err)
-	}
-
-	// Ensure the repository directory exists
-	repoDir := fs.NewPath(repoDirPath())
-	if err := fs.Mkdir(repoDir); err != nil {
-		logger.Error("error while creating repository directory", "error", err)
-	}
-
 	app := loadAppConfig()
 	repo := loadRepoConfig()
 
@@ -40,20 +28,26 @@ func Load() Config {
 }
 
 func loadAppConfig() AppConfig {
+	// Ensure the config directory exists
+	appDir := fs.NewPath(appDirPath())
+	if err := fs.Mkdir(appDir); err != nil {
+		logger.Error("error while creating dotx config directory", "error", err)
+	}
+
 	config := defaultAppConfig()
 	path := appConfigFilePath()
 
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			logger.Warn("error while reading config", "error", err)
+			logger.Warn("error while reading dotx config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, &config); err != nil {
-		logger.Warn("invalid config", "error", err)
+		logger.Warn("invalid dotx config", "error", err)
 	}
 
 	return config
@@ -67,20 +61,26 @@ func defaultAppConfig() AppConfig {
 }
 
 func loadRepoConfig() RepoConfig {
+	// Ensure the dotfiles directory exists
+	repoDir := fs.NewPath(repoDirPath())
+	if err := fs.Mkdir(repoDir); err != nil {
+		logger.Error("error while creating dotfiles directory", "error", err)
+	}
+
 	config := RepoConfig{}
 	path := repoConfigFilePath()
 
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			logger.Warn("error while reading repository config", "error", err)
+			logger.Warn("error while reading dotfiles config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, &config); err != nil {
-		logger.Warn("invalid repository config", "error", err)
+		logger.Warn("invalid dotfiles config", "error", err)
 	}
 
 	return config
