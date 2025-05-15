@@ -73,7 +73,7 @@ func loadAppConfig() AppConfig {
 		return config
 	}
 
-	if err := yaml.Unmarshal(content, config); err != nil {
+	if err := yaml.Unmarshal(content, &config); err != nil {
 		logger.Warn("invalid config", "error", err)
 	}
 
@@ -100,7 +100,7 @@ func loadRepoConfig() RepoConfig {
 		return config
 	}
 
-	if err := yaml.Unmarshal(content, config); err != nil {
+	if err := yaml.Unmarshal(content, &config); err != nil {
 		logger.Warn("invalid repository config", "error", err)
 	}
 

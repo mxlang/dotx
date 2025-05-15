@@ -40,7 +40,7 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 					)
 
 					if err != nil {
-						logger.Error("failed to render TUI: %w", err)
+						logger.Error("failed to render TUI", "error", err)
 					}
 
 					if !overwrite {
@@ -48,7 +48,7 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 					}
 
 					if err := fs.Delete(dest); err != nil {
-						logger.Error("failed to delete: %w", err)
+						logger.Error("failed to delete", "error", err)
 					}
 				}
 

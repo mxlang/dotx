@@ -50,7 +50,7 @@ func Delete(path Path) error {
 		return fmt.Errorf("path does not exist: %s", path.absPath)
 	}
 
-	if err := os.Remove(path.absPath); err != nil {
+	if err := os.RemoveAll(path.absPath); err != nil {
 		return err
 	}
 
