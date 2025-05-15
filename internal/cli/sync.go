@@ -1,11 +1,11 @@
 package cli
 
 import (
-	"github.com/mxlang/dotx/internal/dotx"
+	"github.com/mxlang/dotx/internal/config"
 	"github.com/spf13/cobra"
 )
 
-func newCmdSync(dotx dotx.App) *cobra.Command {
+func newCmdSync(cfg config.Config) *cobra.Command {
 	syncCmd := &cobra.Command{
 		Use:   "sync",
 		Short: "Manage Git operations for your dotfiles repository",
@@ -18,9 +18,9 @@ func newCmdSync(dotx dotx.App) *cobra.Command {
 	}
 
 	syncCmd.AddCommand(
-		newCmdInit(dotx),
-		newCmdPull(dotx),
-		newCmdPush(dotx),
+		newCmdInit(cfg),
+		newCmdPull(cfg),
+		newCmdPush(cfg),
 	)
 
 	return syncCmd

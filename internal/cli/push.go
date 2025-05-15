@@ -1,12 +1,13 @@
 package cli
 
 import (
-	"github.com/mxlang/dotx/internal/dotx"
+	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
-func newCmdPush(dotx dotx.App) *cobra.Command {
+func newCmdPush(cfg config.Config) *cobra.Command {
 	var commitMessage string
 
 	pushCmd := &cobra.Command{
@@ -19,15 +20,27 @@ func newCmdPush(dotx dotx.App) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := dotx.PushRemoteRepo(commitMessage); err != nil {
-				logger.Error("failed to push to remote repo", "error", err)
+			if err := git.Add(cfg.RepoPath, "."); err != nil {
+				logger.Error("failed to add changes", "error", err)
+			} else {
+				logger.Debug("successfully added changes to dotfiles")
 			}
 
-			logger.Info("successfully pushed to remote repo")
+			if err := git.Commit(cfg.RepoPath, commitMessage); err != nil {
+				logger.Error("failed to commit changes", "error", err)
+			} else {
+				logger.Debug("successfully committed changes to dotfiles", "message", commitMessage)
+			}
+
+			if err := git.Push(cfg.RepoPath); err != nil {
+				logger.Error("failed to push changes", "error", err)
+			}
+
+			logger.Info("successfully pushed changes to remote dotfiles")
 		},
 	}
 
-	pushCmd.PersistentFlags().StringVarP(&commitMessage, "message", "m", dotx.AppConfig.CommitMessage, "Specify a commit message")
+	pushCmd.PersistentFlags().StringVarP(&commitMessage, "message", "m", cfg.App.CommitMessage, "Specify a commit message")
 
 	return pushCmd
 }
