@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newCmdInit(cfg config.Config) *cobra.Command {
+func newCmdInit(cfg *config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "init",
 		Short:   "Initialize by cloning a remote dotfiles repository",

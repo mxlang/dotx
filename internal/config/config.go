@@ -15,11 +15,11 @@ type Config struct {
 	Repo RepoConfig
 }
 
-func Load() Config {
+func Load() *Config {
 	app := loadAppConfig()
 	repo := loadRepoConfig()
 
-	return Config{
+	return &Config{
 		RepoPath: repoDirPath(),
 
 		App:  app,

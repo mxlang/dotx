@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newCmdPull(cfg config.Config) *cobra.Command {
+func newCmdPull(cfg *config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "pull",
 		Short:   "Update local dotfiles by pulling changes from remote repository",

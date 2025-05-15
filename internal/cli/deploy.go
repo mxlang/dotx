@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-func newCmdDeploy(cfg config.Config) *cobra.Command {
+func newCmdDeploy(cfg *config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "deploy",
 		Short:   "Deploy your dotfiles to the current system",
@@ -74,8 +74,6 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 
 				logger.Info("successfully deployed", "dotfile", source.Filename())
 			}
-
-			logger.Info("finished deploying dotfiles")
 		},
 	}
 }

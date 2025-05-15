@@ -8,14 +8,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Execute(cfg config.Config, version string) {
+func Execute(cfg *config.Config, version string) {
 	err := newCmdRoot(cfg, version).Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
-func newCmdRoot(cfg config.Config, version string) *cobra.Command {
+func newCmdRoot(cfg *config.Config, version string) *cobra.Command {
 	var verbose bool
 
 	rootCmd := &cobra.Command{

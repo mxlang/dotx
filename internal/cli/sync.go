@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newCmdSync(cfg config.Config) *cobra.Command {
+func newCmdSync(cfg *config.Config) *cobra.Command {
 	syncCmd := &cobra.Command{
 		Use:   "sync",
 		Short: "Manage Git operations for your dotfiles repository",

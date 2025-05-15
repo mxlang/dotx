@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newCmdPush(cfg config.Config) *cobra.Command {
+func newCmdPush(cfg *config.Config) *cobra.Command {
 	var commitMessage string
 
 	pushCmd := &cobra.Command{
