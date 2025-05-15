@@ -23,6 +23,8 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 				source := fs.NewPath(filepath.Join(cfg.RepoPath, dotfile.Source))
 				dest := fs.NewPath(dotfile.Destination)
 
+				logger.Debug("deploy source to destination", "source", source.AbsPath(), "destination", dest.AbsPath())
+
 				if dest.Exists() {
 					if dest.IsSymlink() && dest.SymlinkPath() == source.AbsPath() {
 						logger.Debug("dotfile already deployed with dotx", "dotfile", source.Filename())
@@ -44,22 +46,30 @@ func newCmdDeploy(cfg config.Config) *cobra.Command {
 					}
 
 					if !overwrite {
+						logger.Debug("overwrite cancelled")
 						continue
 					}
 
+					logger.Debug("deleting", "file", dest.AbsPath())
 					if err := fs.Delete(dest); err != nil {
 						logger.Error("failed to delete", "error", err)
+					} else {
+						logger.Debug("deleted", "path", dest.AbsPath())
 					}
 				}
 
 				// Ensure parent directory exists
 				dir := fs.NewPath(dest.Dir())
 				if err := fs.Mkdir(dir); err != nil {
-					logger.Error("could not create parent directory for %s: %w", dest.AbsPath(), err)
+					logger.Error("could not create parent directory", "error", err)
+				} else {
+					logger.Debug("parent directory created or already exists", "dir", dir.AbsPath())
 				}
 
 				if err := fs.Symlink(source, dest); err != nil {
-					logger.Error("failed to create symlink: %w", err)
+					logger.Error("failed to create symlink", "error", err)
+				} else {
+					logger.Debug("created symlink from source to destination", "source", source.AbsPath(), "destination", dest.AbsPath())
 				}
 			}
 

@@ -22,7 +22,7 @@ func newCmdInit(cfg config.Config) *cobra.Command {
 			dir := fs.NewPath(cfg.RepoPath)
 			if dir.HasSubfiles() {
 				overwrite, err := tui.Confirm(
-					"Already a git repository. Overwrite?",
+					"Directory is already a Git repository. Overwrite?",
 					"",
 				)
 
@@ -31,17 +31,22 @@ func newCmdInit(cfg config.Config) *cobra.Command {
 				}
 
 				if !overwrite {
+					logger.Debug("overwrite cancelled")
 					return
 				}
 
 				if err := fs.Delete(dir); err != nil {
 					logger.Error("failed to delete", "error", err)
+				} else {
+					logger.Debug("deleted", "path", dir)
 				}
 			}
 
 			url := args[0]
-			if err := git.Clone(cfg.RepoPath, url); err != nil {
+			if err := git.Clone(dir.AbsPath(), url); err != nil {
 				logger.Error("failed to clone remote repository", "error", err)
+			} else {
+				logger.Debug("cloned remote repository from url to path", "url", url, "path", dir.AbsPath())
 			}
 
 			logger.Info("successfully cloned remote repository")

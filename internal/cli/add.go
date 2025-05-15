@@ -30,15 +30,21 @@ func newCmdAdd(cfg config.Config) *cobra.Command {
 			}
 
 			if err := fs.Move(source, dest); err != nil {
-				logger.Error("failed to move: %w", err)
+				logger.Error("failed to move", "error", err)
+			} else {
+				logger.Debug("moved from source to destination", "source", source.AbsPath(), "destination", dest.AbsPath())
 			}
 
 			if err := fs.Symlink(dest, source); err != nil {
-				logger.Error("failed to create symlink: %w", err)
+				logger.Error("failed to create symlink", "error", err)
+			} else {
+				logger.Debug("created symlink from destination to source", "destination", dest.AbsPath(), "source", source.AbsPath())
 			}
 
 			if err := cfg.Repo.WriteDotfile(source, dest); err != nil {
-				logger.Error("failed to write repository config: %w", err)
+				logger.Error("failed to write repository config", "error", err)
+			} else {
+				logger.Debug("written to repository config")
 			}
 
 			logger.Info("successfully added to dotfiles repository")
