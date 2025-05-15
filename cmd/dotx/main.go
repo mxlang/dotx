@@ -9,5 +9,5 @@ var version = "dev"
 
 func main() {
 	cfg := config.Load()
-	cli.Execute(cfg)
+	cli.Execute(cfg, version)
 }
