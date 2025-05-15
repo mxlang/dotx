@@ -7,7 +7,6 @@ import (
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/mxlang/dotx/internal/tui"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func newCmdInit(cfg config.Config) *cobra.Command {
@@ -20,12 +19,8 @@ func newCmdInit(cfg config.Config) *cobra.Command {
 		Args: cobra.ExactArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
-			files, err := os.ReadDir(cfg.RepoPath)
-			if err != nil {
-				logger.Error("failed to read content from directory", "error", err)
-			}
-
-			if len(files) > 0 {
+			dir := fs.NewPath(cfg.RepoPath)
+			if dir.HasSubfiles() {
 				overwrite, err := tui.Confirm(
 					"Already a git repository. Overwrite?",
 					"",
@@ -39,7 +34,7 @@ func newCmdInit(cfg config.Config) *cobra.Command {
 					return
 				}
 
-				if err := fs.Delete(fs.NewPath(cfg.RepoPath)); err != nil {
+				if err := fs.Delete(dir); err != nil {
 					logger.Error("failed to delete", "error", err)
 				}
 			}
