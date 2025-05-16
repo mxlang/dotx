@@ -10,7 +10,7 @@ import (
 
 func newCmdAdd(cfg *config.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "add",
+		Use:   "add <path>",
 		Short: "Add a file or directory to your dotfiles",
 		Long:  "Track a configuration file or directory in your dotfiles by creating a symlink to its original location",
 		Example: `  dotx add ~/.bashrc

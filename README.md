@@ -105,7 +105,7 @@ All commands support the following flags:
 
 ### `add`
 
-Track a configuration file or directory in your dotfiles repository by creating a symlink to its original location.
+Add a file or directory to your dotfiles. This command tracks a configuration file or directory in your dotfiles by creating a symlink to its original location.
 
 ```bash
 dotx add <path>
@@ -119,47 +119,73 @@ dotx add ~/.config/nvim
 
 ### `deploy`
 
-Create symbolic links from your dotfiles repository to their appropriate locations in your home directory.
+Deploy your dotfiles to the current system. This command creates symbolic links from your dotfiles to their appropriate locations in your home directory.
 
 ```bash
+dotx deploy [-f, --force]
+```
+
+Options:
+- `-f, --force`: Do not prompt for confirmation when overwriting existing files
+
+Example:
+```bash
 dotx deploy
+dotx deploy --force
 ```
 
 ### `sync`
 
-Manage Git operations for your dotfiles repository.
+Manage Git operations for your dotfiles repository. This command provides subcommands for initializing, pulling, and pushing changes to synchronize your dotfiles across systems.
 
 #### `sync init`
 
-Set up your dotfiles environment by cloning an existing Git repository containing your configuration files.
+Initialize by cloning a remote dotfiles repository. This command sets up your dotfiles environment by cloning an existing Git repository containing your configuration files.
 
 ```bash
-dotx sync init <repository-url>
+dotx sync init <repository-url> [-d, --deploy]
 ```
+
+Options:
+- `-d, --deploy`: Automatically deploy dotfiles after initialization
 
 Example:
 ```bash
 dotx sync init https://github.com/username/dotfiles.git
+dotx sync init https://github.com/username/dotfiles.git --deploy
 ```
 
 #### `sync pull`
 
-Fetch and merge the latest changes from your remote dotfiles repository to keep your local copy up-to-date.
+Update local dotfiles by pulling changes from the remote repository. This command fetches and merges the latest changes from your remote dotfiles repository to keep your local copy up-to-date.
 
 ```bash
+dotx sync pull [-d, --deploy]
+```
+
+Options:
+- `-d, --deploy`: Automatically deploy dotfiles after pulling
+
+Example:
+```bash
 dotx sync pull
+dotx sync pull --deploy
 ```
 
 #### `sync push`
 
-Commit local changes to your dotfiles and push them to the remote repository for backup and sharing.
+Save and upload local dotfile changes to the remote repository. This command commits local changes to your dotfiles and pushes them to the remote repository for backup and sharing.
 
 ```bash
-dotx sync push [-m <commit-message>]
+dotx sync push [-m, --message <commit-message>]
 ```
+
+Options:
+- `-m, --message`: Specify a commit message (if not provided, uses the default commit message from config)
 
 Example:
 ```bash
+dotx sync push
 dotx sync push -m "Update bash aliases"
 ```
 
@@ -174,6 +200,7 @@ Located at `$XDG_CONFIG_HOME/dotx/config.yaml` (typically `~/.config/dotx/config
 ```yaml
 verbose: true                            # Enable verbose logging
 commitMessage: "default commit message"  # Default commit message for sync push
+deployOnInit: false
 ```
 
 You can create or edit this file manually to customize dotx's behavior. If the file doesn't exist, dotx will use default values.
