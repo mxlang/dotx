@@ -18,7 +18,8 @@ func newCmdInit(cfg *config.Config) *cobra.Command {
 		Short: "Initialize by cloning a remote dotfiles repository",
 		Long:  "Set up your dotfiles environment by cloning an existing Git repository containing your configuration files",
 		Example: `  dotx sync init https://github.com/username/dotfiles.git
-  dotx sync init https://github.com/username/dotfiles.git --deploy`,
+  dotx sync init https://github.com/username/dotfiles.git --deploy
+  dotx sync init https://github.com/username/dotfiles.git --deploy --force`,
 
 		Args: cobra.ExactArgs(1),
 

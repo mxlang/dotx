@@ -16,7 +16,8 @@ func newCmdPull(cfg *config.Config) *cobra.Command {
 		Short: "Update local dotfiles by pulling changes from remote repository",
 		Long:  "Fetch and merge the latest changes from your remote dotfiles repository to keep your local copy up-to-date",
 		Example: `  dotx sync pull
-  dotx sync pull --deploy`,
+  dotx sync pull --deploy
+  dotx sync pull --deploy --force`,
 
 		Args: cobra.NoArgs,
 

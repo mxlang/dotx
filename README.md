@@ -143,16 +143,18 @@ Manage Git operations for your dotfiles repository. This command provides subcom
 Initialize by cloning a remote dotfiles repository. This command sets up your dotfiles environment by cloning an existing Git repository containing your configuration files.
 
 ```bash
-dotx sync init <repository-url> [-d, --deploy]
+dotx sync init <repository-url> [-d, --deploy] [-f, --force]
 ```
 
 Options:
 - `-d, --deploy`: Automatically deploy dotfiles after initialization
+- `-f, --force`: Do not prompt for confirmation when overwriting existing files
 
 Example:
 ```bash
 dotx sync init https://github.com/username/dotfiles.git
 dotx sync init https://github.com/username/dotfiles.git --deploy
+dotx sync init https://github.com/username/dotfiles.git --deploy --force
 ```
 
 #### `sync pull`
@@ -160,16 +162,18 @@ dotx sync init https://github.com/username/dotfiles.git --deploy
 Update local dotfiles by pulling changes from the remote repository. This command fetches and merges the latest changes from your remote dotfiles repository to keep your local copy up-to-date.
 
 ```bash
-dotx sync pull [-d, --deploy]
+dotx sync pull [-d, --deploy] [-f, --force]
 ```
 
 Options:
 - `-d, --deploy`: Automatically deploy dotfiles after pulling
+- `-f, --force`: Do not prompt for confirmation when overwriting existing files
 
 Example:
 ```bash
 dotx sync pull
 dotx sync pull --deploy
+dotx sync pull --deploy --force
 ```
 
 #### `sync push`
@@ -200,7 +204,8 @@ Located at `$XDG_CONFIG_HOME/dotx/config.yaml` (typically `~/.config/dotx/config
 ```yaml
 verbose: true                            # Enable verbose logging
 commitMessage: "default commit message"  # Default commit message for sync push
-deployOnInit: false
+deployOnInit: false                      # Automatically deploy dotfiles on init
+deployOnPull: false                      #Automatically deploy dotfiles on pull
 ```
 
 You can create or edit this file manually to customize dotx's behavior. If the file doesn't exist, dotx will use default values.
