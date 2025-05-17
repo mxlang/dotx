@@ -8,13 +8,24 @@ import (
 	"strings"
 )
 
-type RepoConfig struct {
-	Dotfiles []Dotfile `yaml:"dotfiles"`
-}
-
 type Dotfile struct {
 	Source      string `yaml:"source"`
 	Destination string `yaml:"destination"`
+}
+
+type PullScripts struct {
+	Before []string `yaml:"before"`
+	After  []string `yaml:"after"`
+}
+
+type Scripts struct {
+	Init []string    `yaml:"init"`
+	Pull PullScripts `yaml:"pull"`
+}
+
+type RepoConfig struct {
+	Dotfiles []Dotfile `yaml:"dotfiles"`
+	Scripts  Scripts   `yaml:"scripts"`
 }
 
 func (r *RepoConfig) DotfileExists(source fs.Path) bool {
