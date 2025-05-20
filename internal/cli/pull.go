@@ -7,9 +7,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type pullOptions struct {
+	deploy bool
+	force  bool
+}
+
 func newCmdPull(cfg *config.Config) *cobra.Command {
-	var deploy bool
-	var force bool
+	pullOpts := pullOptions{}
 
 	pullCmd := &cobra.Command{
 		Use:   "pull",
@@ -22,21 +26,25 @@ func newCmdPull(cfg *config.Config) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := git.Pull(cfg.RepoPath); err != nil {
-				logger.Error("failed to pull remote dotfiles", "error", err)
-			}
-
-			if deploy {
-				logger.Debug("automatically deploy dotfiles was activated")
-				runDeploy(cfg, force)
-			}
-
-			logger.Info("successfully pulled from remote dotfiles")
+			runPull(cfg, pullOpts)
 		},
 	}
 
-	pullCmd.PersistentFlags().BoolVarP(&deploy, "deploy", "d", cfg.App.DeployOnPull, "automatically deploy dotfiles")
-	pullCmd.PersistentFlags().BoolVarP(&force, "force", "f", false, "never prompt for overwriting")
+	pullCmd.PersistentFlags().BoolVarP(&pullOpts.deploy, "deploy", "d", cfg.App.DeployOnPull, "automatically deploy dotfiles")
+	pullCmd.PersistentFlags().BoolVarP(&pullOpts.force, "force", "f", false, "never prompt for overwriting")
 
 	return pullCmd
+}
+
+func runPull(cfg *config.Config, pullOpts pullOptions) {
+	if err := git.Pull(cfg.RepoPath); err != nil {
+		logger.Error("failed to pull remote dotfiles", "error", err)
+	}
+
+	if pullOpts.deploy {
+		logger.Debug("automatically deploy dotfiles was activated")
+		runDeploy(cfg, pullOpts.force)
+	}
+
+	logger.Info("successfully pulled from remote dotfiles")
 }
