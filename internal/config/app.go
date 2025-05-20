@@ -1,6 +1,6 @@
 package config
 
-type AppConfig struct {
+type appConfig struct {
 	Verbose       bool   `yaml:"verbose"`
 	CommitMessage string `yaml:"commitMessage"`
 	DeployOnInit  bool   `yaml:"deployOnInit"`
