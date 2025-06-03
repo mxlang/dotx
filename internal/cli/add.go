@@ -35,22 +35,19 @@ func runAdd(cfg *config.Config, path string) {
 		logger.Error("already exists in dotfiles")
 	}
 
+	logger.Debug("move", "from", source.AbsPath(), "to", dest.AbsPath())
 	if err := fs.Move(source, dest); err != nil {
 		logger.Error("failed to move", "error", err)
-	} else {
-		logger.Debug("moved", "from", source.AbsPath(), "to", dest.AbsPath())
 	}
 
+	logger.Debug("create symlink", "from", dest.AbsPath(), "to", source.AbsPath())
 	if err := fs.Symlink(dest, source); err != nil {
 		logger.Error("failed to create symlink", "error", err)
-	} else {
-		logger.Debug("created symlink", "from", dest.AbsPath(), "to", source.AbsPath())
 	}
 
+	logger.Debug("write to dotfiles config")
 	if err := cfg.Repo.WriteDotfile(source, dest); err != nil {
 		logger.Error("failed to write dotfiles config", "error", err)
-	} else {
-		logger.Debug("written to dotfiles config")
 	}
 
 	logger.Info("successfully added", "dotfile", source.Filename())

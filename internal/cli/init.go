@@ -9,9 +9,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type initOptions struct {
+	deploy bool
+	force  bool
+}
+
 func newCmdInit(cfg *config.Config) *cobra.Command {
-	var deploy bool
-	var force bool
+	opts := initOptions{}
 
 	initCmd := &cobra.Command{
 		Use:   "init <repository-url>",
@@ -24,17 +28,17 @@ func newCmdInit(cfg *config.Config) *cobra.Command {
 		Args: cobra.ExactArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
-			runInit(cfg, args[0], deploy, force)
+			runInit(cfg, opts, args[0])
 		},
 	}
 
-	initCmd.PersistentFlags().BoolVarP(&deploy, "deploy", "d", cfg.App.DeployOnInit, "automatically deploy dotfiles")
-	initCmd.PersistentFlags().BoolVarP(&force, "force", "f", false, "never prompt for overwriting")
+	initCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", cfg.App.DeployOnInit, "automatically deploy dotfiles")
+	initCmd.PersistentFlags().BoolVarP(&opts.force, "force", "f", false, "never prompt for overwriting")
 
 	return initCmd
 }
 
-func runInit(cfg *config.Config, url string, deploy bool, force bool) {
+func runInit(cfg *config.Config, opts initOptions, url string) {
 	dir := fs.NewPath(cfg.RepoPath)
 	if dir.HasSubfiles() {
 		overwrite, err := tui.Confirm(
@@ -51,20 +55,20 @@ func runInit(cfg *config.Config, url string, deploy bool, force bool) {
 			return
 		}
 
+		logger.Debug("delete", "path", dir.AbsPath())
 		if err := fs.Delete(dir); err != nil {
 			logger.Error("failed to delete", "error", err)
-		} else {
-			logger.Debug("deleted", "path", dir.AbsPath())
 		}
 	}
 
+	logger.Debug("clone remote dotfiles", "url", url)
 	if err := git.Clone(dir.AbsPath(), url); err != nil {
 		logger.Error("failed to clone remote dotfiles", "error", err)
 	}
 
-	if deploy {
-		logger.Debug("automatically deploy dotfiles was activated")
-		runDeploy(cfg, force)
+	if opts.deploy {
+		logger.Debug("automatic deploy is active")
+		runDeploy(cfg, opts.force)
 	}
 
 	logger.Info("successfully cloned remote dotfiles")
