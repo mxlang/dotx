@@ -153,7 +153,6 @@ Options:
 Example:
 ```bash
 dotx sync init https://github.com/username/dotfiles.git
-dotx sync init https://github.com/username/dotfiles.git --deploy
 dotx sync init https://github.com/username/dotfiles.git --deploy --force
 ```
 
@@ -172,7 +171,6 @@ Options:
 Example:
 ```bash
 dotx sync pull
-dotx sync pull --deploy
 dotx sync pull --deploy --force
 ```
 
@@ -204,8 +202,8 @@ Located at `$XDG_CONFIG_HOME/dotx/config.yaml` (typically `~/.config/dotx/config
 ```yaml
 verbose: true                            # Enable verbose logging
 commitMessage: "default commit message"  # Default commit message for sync push
-deployOnInit: false                      # Automatically deploy dotfiles on init
-deployOnPull: false                      #Automatically deploy dotfiles on pull
+deployOnInit: true                      # Automatically deploy dotfiles after initialization
+deployOnPull: true                      # Automatically deploy dotfiles after pulling
 ```
 
 You can create or edit this file manually to customize dotx's behavior. If the file doesn't exist, dotx will use default values.
