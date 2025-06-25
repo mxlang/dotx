@@ -36,7 +36,7 @@ func runDeploy(cfg *config.Config, force bool) {
 		source := fs.NewPath(filepath.Join(cfg.RepoPath, dotfile.Source))
 		dest := fs.NewPath(dotfile.Destination)
 
-		logger.Debug("try deploying", "from", source.AbsPath(), "to", dest.AbsPath())
+		logger.Debug("deploy dotfile", "from", source.AbsPath(), "to", dest.AbsPath())
 
 		if dest.Exists() {
 			if dest.IsSymlink() && dest.SymlinkPath() == source.AbsPath() {
@@ -65,25 +65,22 @@ func runDeploy(cfg *config.Config, force bool) {
 				}
 			}
 
+			logger.Debug("delete", "path", dest.AbsPath())
 			if err := fs.Delete(dest); err != nil {
 				logger.Error("failed to delete", "error", err)
-			} else {
-				logger.Debug("deleted", "path", dest.AbsPath())
 			}
 		}
 
 		// Ensure parent directory exists
 		dir := fs.NewPath(dest.Dir())
+		logger.Debug("create parent directory if not exists", "dir", dir.AbsPath())
 		if err := fs.Mkdir(dir); err != nil {
 			logger.Error("could not create parent directory", "error", err)
-		} else {
-			logger.Debug("parent directory created or already exists", "dir", dir.AbsPath())
 		}
 
+		logger.Debug("create symlink", "from", source.AbsPath(), "to", dest.AbsPath())
 		if err := fs.Symlink(source, dest); err != nil {
 			logger.Error("failed to create symlink", "error", err)
-		} else {
-			logger.Debug("created symlink", "from", source.AbsPath(), "to", dest.AbsPath())
 		}
 
 		logger.Info("successfully deployed", "dotfile", source.Filename())

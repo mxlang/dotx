@@ -8,16 +8,27 @@ import (
 	"strings"
 )
 
-type RepoConfig struct {
-	Dotfiles []Dotfile `yaml:"dotfiles"`
-}
-
-type Dotfile struct {
+type dotfile struct {
 	Source      string `yaml:"source"`
 	Destination string `yaml:"destination"`
 }
 
-func (r *RepoConfig) DotfileExists(source fs.Path) bool {
+type pullScripts struct {
+	Before []string `yaml:"before"`
+	After  []string `yaml:"after"`
+}
+
+type scripts struct {
+	Init []string    `yaml:"init"`
+	Pull pullScripts `yaml:"pull"`
+}
+
+type repoConfig struct {
+	Dotfiles []dotfile `yaml:"dotfiles"`
+	Scripts  scripts   `yaml:"scripts"`
+}
+
+func (r *repoConfig) DotfileExists(source fs.Path) bool {
 	for _, dotfile := range r.Dotfiles {
 		if fs.NewPath(dotfile.Destination) == source {
 			return true
@@ -27,13 +38,13 @@ func (r *RepoConfig) DotfileExists(source fs.Path) bool {
 	return false
 }
 
-func (r *RepoConfig) WriteDotfile(source, dest fs.Path) error {
+func (r *repoConfig) WriteDotfile(source, dest fs.Path) error {
 	// normalize paths
 	home, _ := os.UserHomeDir()
 	sourcePath := strings.Replace(source.AbsPath(), home, "$HOME", 1)
 	destinationPath := strings.Replace(dest.AbsPath(), repoDirPath(), "", 1)
 
-	dotfile := Dotfile{
+	dotfile := dotfile{
 		Source:      destinationPath,
 		Destination: sourcePath,
 	}
