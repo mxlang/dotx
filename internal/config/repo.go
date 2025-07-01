@@ -13,19 +13,13 @@ type dotfile struct {
 	Destination string `yaml:"destination"`
 }
 
-type pullScripts struct {
-	Before []string `yaml:"before"`
-	After  []string `yaml:"after"`
-}
-
 type scripts struct {
-	Init []string    `yaml:"init"`
-	Pull pullScripts `yaml:"pull"`
+	Init []string `yaml:"init"`
 }
 
 type repoConfig struct {
 	Dotfiles []dotfile `yaml:"dotfiles"`
-	Scripts  scripts   `yaml:"scripts"`
+	Scripts  scripts   `yaml:"scripts,omitempty"`
 }
 
 func (r *repoConfig) DotfileExists(source fs.Path) bool {
