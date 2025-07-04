@@ -2,14 +2,15 @@ package config
 
 import (
 	"errors"
+	"os"
+
 	"github.com/goccy/go-yaml"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/logger"
-	"os"
 )
 
 type Config struct {
-	RepoPath string
+	RepoPath string // TODO change type to fs.Path
 
 	App  appConfig
 	Repo repoConfig

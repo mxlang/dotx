@@ -1,11 +1,12 @@
 package cli
 
 import (
+	"path/filepath"
+
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 func newCmdAdd(cfg *config.Config) *cobra.Command {
@@ -31,7 +32,7 @@ func runAdd(cfg *config.Config, path string) {
 	filename := source.Filename()
 	dest := fs.NewPath(filepath.Join(cfg.RepoPath, filename))
 
-	if cfg.Repo.DotfileExists(source) {
+	if cfg.Repo.HasDotfile(source) {
 		logger.Error("already exists in dotfiles")
 	}
 
@@ -46,7 +47,7 @@ func runAdd(cfg *config.Config, path string) {
 	}
 
 	logger.Debug("write to dotfiles config")
-	if err := cfg.Repo.WriteDotfile(source, dest); err != nil {
+	if err := cfg.Repo.AddDotfile(source, dest); err != nil {
 		logger.Error("failed to write dotfiles config", "error", err)
 	}
 
