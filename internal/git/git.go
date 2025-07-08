@@ -2,11 +2,12 @@ package git
 
 import (
 	"errors"
-	"github.com/go-git/go-git/v5"
+
+	"github.com/go-git/go-git/v6"
 )
 
 func Clone(repoDir string, url string) error {
-	_, err := git.PlainClone(repoDir, false, &git.CloneOptions{
+	_, err := git.PlainClone(repoDir, &git.CloneOptions{
 		URL: url,
 	})
 
@@ -88,4 +89,18 @@ func Push(repoDir string) error {
 	}
 
 	return nil
+}
+
+func Remote(repoDir string) ([]string, error) {
+	repo, err := git.PlainOpen(repoDir)
+	if err != nil {
+		return nil, err
+	}
+
+	remote, err := repo.Remote("origin")
+	if err != nil {
+		return nil, err
+	}
+
+	return remote.Config().URLs, nil
 }

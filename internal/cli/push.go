@@ -20,27 +20,30 @@ func newCmdPush(cfg *config.Config) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := git.Add(cfg.RepoPath, "."); err != nil {
-				logger.Error("failed to add changes", "error", err)
-			} else {
-				logger.Debug("successfully added changes to dotfiles")
-			}
-
-			if err := git.Commit(cfg.RepoPath, commitMessage); err != nil {
-				logger.Error("failed to commit changes", "error", err)
-			} else {
-				logger.Debug("successfully committed changes to dotfiles", "message", commitMessage)
-			}
-
-			if err := git.Push(cfg.RepoPath); err != nil {
-				logger.Error("failed to push changes", "error", err)
-			}
-
-			logger.Info("successfully pushed changes to remote dotfiles")
+			runPush(cfg, commitMessage)
 		},
 	}
 
 	pushCmd.PersistentFlags().StringVarP(&commitMessage, "message", "m", cfg.App.CommitMessage, "Specify a commit message")
 
 	return pushCmd
+}
+
+func runPush(cfg *config.Config, commitMessage string) {
+	logger.Debug("add changes to dotfiles")
+	if err := git.Add(cfg.RepoPath, "."); err != nil {
+		logger.Error("failed to add changes", "error", err)
+	}
+
+	logger.Debug("commit changes to dotfiles", "message", commitMessage)
+	if err := git.Commit(cfg.RepoPath, commitMessage); err != nil {
+		logger.Error("failed to commit changes", "error", err)
+	}
+
+	logger.Debug("push changes to dotfiles")
+	if err := git.Push(cfg.RepoPath); err != nil {
+		logger.Error("failed to push changes", "error", err)
+	}
+
+	logger.Info("successfully pushed changes to remote dotfiles")
 }

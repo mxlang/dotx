@@ -1,11 +1,12 @@
 package cli
 
 import (
+	"path/filepath"
+
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 func newCmdAdd(cfg *config.Config) *cobra.Command {
@@ -31,26 +32,23 @@ func runAdd(cfg *config.Config, path string) {
 	filename := source.Filename()
 	dest := fs.NewPath(filepath.Join(cfg.RepoPath, filename))
 
-	if cfg.Repo.DotfileExists(source) {
+	if cfg.Repo.HasDotfile(source) {
 		logger.Error("already exists in dotfiles")
 	}
 
+	logger.Debug("move", "from", source.AbsPath(), "to", dest.AbsPath())
 	if err := fs.Move(source, dest); err != nil {
 		logger.Error("failed to move", "error", err)
-	} else {
-		logger.Debug("moved", "from", source.AbsPath(), "to", dest.AbsPath())
 	}
 
+	logger.Debug("create symlink", "from", dest.AbsPath(), "to", source.AbsPath())
 	if err := fs.Symlink(dest, source); err != nil {
 		logger.Error("failed to create symlink", "error", err)
-	} else {
-		logger.Debug("created symlink", "from", dest.AbsPath(), "to", source.AbsPath())
 	}
 
-	if err := cfg.Repo.WriteDotfile(source, dest); err != nil {
+	logger.Debug("write to dotfiles config")
+	if err := cfg.Repo.AddDotfile(source, dest); err != nil {
 		logger.Error("failed to write dotfiles config", "error", err)
-	} else {
-		logger.Debug("written to dotfiles config")
 	}
 
 	logger.Info("successfully added", "dotfile", source.Filename())

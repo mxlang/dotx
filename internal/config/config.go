@@ -2,17 +2,18 @@ package config
 
 import (
 	"errors"
+	"os"
+
 	"github.com/goccy/go-yaml"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/logger"
-	"os"
 )
 
 type Config struct {
-	RepoPath string
+	RepoPath string // TODO change type to fs.Path
 
-	App  AppConfig
-	Repo RepoConfig
+	App  appConfig
+	Repo repoConfig
 }
 
 func Load() *Config {
@@ -27,7 +28,7 @@ func Load() *Config {
 	}
 }
 
-func loadAppConfig() AppConfig {
+func loadAppConfig() appConfig {
 	// Ensure the config directory exists
 	appDir := fs.NewPath(appDirPath())
 	if err := fs.Mkdir(appDir); err != nil {
@@ -53,21 +54,23 @@ func loadAppConfig() AppConfig {
 	return config
 }
 
-func defaultAppConfig() AppConfig {
-	return AppConfig{
+func defaultAppConfig() appConfig {
+	return appConfig{
 		Verbose:       false,
 		CommitMessage: "update dotfiles",
+		DeployOnPull:  false,
+		DeployOnInit:  false,
 	}
 }
 
-func loadRepoConfig() RepoConfig {
+func loadRepoConfig() repoConfig {
 	// Ensure the dotfiles directory exists
 	repoDir := fs.NewPath(repoDirPath())
 	if err := fs.Mkdir(repoDir); err != nil {
 		logger.Error("error while creating dotfiles directory", "error", err)
 	}
 
-	config := RepoConfig{}
+	config := repoConfig{}
 	path := repoConfigFilePath()
 
 	content, err := os.ReadFile(path)
