@@ -108,13 +108,17 @@ All commands support the following flags:
 Add a file or directory to your dotfiles. This command tracks a configuration file or directory in your dotfiles by creating a symlink to its original location.
 
 ```bash
-dotx add <path>
+dotx add <path> [-d, --dir]
 ```
+
+Options:
+- `-d, --dir`: Optional directory to add the dotfile to
 
 Example:
 ```bash
 dotx add ~/.bashrc
 dotx add ~/.config/nvim
+dotx add -d starship ~/.config/starship.toml
 ```
 
 ### `deploy`

@@ -10,27 +10,42 @@ import (
 )
 
 func newCmdAdd(cfg *config.Config) *cobra.Command {
-	return &cobra.Command{
+	var optionalDir string
+
+	addCmd := &cobra.Command{
 		Use:   "add <path>",
 		Short: "Add a file or directory to your dotfiles",
 		Long:  "Track a configuration file or directory in your dotfiles by creating a symlink to its original location",
 		Example: `  dotx add ~/.bashrc
-  dotx add ~/.config/nvim`,
+  dotx add ~/.config/nvim
+  dotx add -d starship ~/.config/starship.toml`,
 
 		Args: cobra.MinimumNArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
 			for _, path := range args {
-				runAdd(cfg, path)
+				runAdd(cfg, path, optionalDir)
 			}
 		},
 	}
+
+	addCmd.Flags().StringVarP(&optionalDir, "dir", "d", "", "optional directory to add dotfile to")
+
+	return addCmd
 }
 
-func runAdd(cfg *config.Config, path string) {
+func runAdd(cfg *config.Config, path string, optionalDir string) {
 	source := fs.NewPath(path)
 	filename := source.Filename()
 	dest := fs.NewPath(filepath.Join(cfg.RepoPath, filename))
+
+	if optionalDir != "" {
+		dir := fs.NewPath(filepath.Join(cfg.RepoPath, optionalDir))
+		if err := fs.Mkdir(dir); err != nil {
+			logger.Error("could not create directory", "dir", dir, "error", err)
+		}
+		dest = fs.NewPath(filepath.Join(cfg.RepoPath, optionalDir, filename))
+	}
 
 	if cfg.Repo.HasDotfile(source) {
 		logger.Error("already exists in dotfiles")
