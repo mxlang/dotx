@@ -2,15 +2,27 @@ package git
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/go-git/go-git/v6"
+	"github.com/go-git/go-git/v6/plumbing/transport/ssh"
 )
 
 func Clone(repoDir string, url string) error {
-	_, err := git.PlainClone(repoDir, &git.CloneOptions{
+	gitOpts := &git.CloneOptions{
 		URL: url,
-	})
+	}
 
+	if strings.HasPrefix(url, "ssh://") || strings.HasPrefix(url, "git@") {
+		authMethod, err := ssh.NewSSHAgentAuth("git")
+		if err != nil {
+			return err
+		}
+
+		gitOpts.Auth = authMethod
+	}
+
+	_, err := git.PlainClone(repoDir, gitOpts)
 	if err != nil {
 		return err
 	}
