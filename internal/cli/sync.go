@@ -21,6 +21,7 @@ func newCmdSync(cfg *config.Config) *cobra.Command {
 		newCmdInit(cfg),
 		newCmdPull(cfg),
 		newCmdPush(cfg),
+		newCmdStatus(cfg),
 	)
 
 	return syncCmd
