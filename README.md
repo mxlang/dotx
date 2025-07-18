@@ -58,6 +58,12 @@ cd dotx
 go install ./cmd/dotx
 ```
 
+#### Setup your shell to use dotx
+
+```bash
+eval "$(dotx init)"
+```
+
 ## Usage
 
 ### Getting Started
@@ -136,6 +142,15 @@ Example:
 ```bash
 dotx deploy
 dotx deploy --force
+```
+
+### `cd`
+
+Go to your local dotfiles directory. You need to add `eval "$(dotx init)"` to your shell config to work properly.
+
+Example:
+```bash
+dotx cd
 ```
 
 ### `sync`

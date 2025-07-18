@@ -31,8 +31,7 @@ dotx() {
 func newCmdCd(cfg *config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "cd",
-		Short:   "",
-		Long:    "",
+		Short:   "Go to your local dotfiles directory",
 		Example: "  dotx cd",
 
 		Args: cobra.NoArgs,
