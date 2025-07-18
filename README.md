@@ -196,6 +196,19 @@ dotx sync push
 dotx sync push -m "Update bash aliases"
 ```
 
+#### `sync status`
+
+Show if your dotfiles repository is up to date with the remote.
+
+Options:
+- `-p, --prompt`: Return a boolean that can be used in your shell prompt to indicate your dotfiles repository status
+
+Example:
+```bash
+dotx sync status
+dotx sync status --prompt
+```
+
 ## Configuration
 
 dotx uses two configuration files that follow the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):

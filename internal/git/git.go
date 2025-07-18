@@ -2,6 +2,7 @@ package git
 
 import (
 	"errors"
+	"github.com/go-git/go-git/v6/plumbing"
 	"strings"
 
 	"github.com/go-git/go-git/v6"
@@ -115,4 +116,43 @@ func Remote(repoDir string) ([]string, error) {
 	}
 
 	return remote.Config().URLs, nil
+}
+
+func IsBehindRemote(repoDir string) (bool, error) {
+	repo, err := git.PlainOpen(repoDir)
+	if err != nil {
+		return false, err
+	}
+
+	err = repo.Fetch(&git.FetchOptions{RemoteName: "origin", Progress: nil, Tags: git.NoTags})
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+		return false, err
+	}
+
+	headRef, err := repo.Head()
+	if err != nil {
+		return false, err
+	}
+
+	remoteRef, err := repo.Reference(plumbing.NewRemoteReferenceName("origin", headRef.Name().Short()), true)
+	if err != nil {
+		return false, err
+	}
+
+	headCommit, err := repo.CommitObject(headRef.Hash())
+	if err != nil {
+		return false, err
+	}
+
+	remoteCommit, err := repo.CommitObject(remoteRef.Hash())
+	if err != nil {
+		return false, err
+	}
+
+	isAncestor, err := headCommit.IsAncestor(remoteCommit)
+	if err != nil {
+		return false, err
+	}
+
+	return isAncestor, nil
 }
