@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
@@ -26,6 +27,7 @@ func newCmdStatus(cfg *config.Config) *cobra.Command {
 			}
 
 			if prompt {
+				fmt.Println(isBehind)
 				return
 			}
 
