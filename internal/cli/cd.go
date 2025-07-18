@@ -14,16 +14,7 @@ func newCmdInitShell() *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Print(`
-dotx() {
-  if [ "$1" = "cd" ]; then
-    shift
-    cd "$(command dotx cd "$@")"
-  else
-    command dotx "$@"
-  fi
-}
-`)
+			fmt.Print(`dotx() { if [ "$1" = "cd" ]; then shift cd "$(command dotx cd "$@")" else command dotx "$@" fi }`)
 		},
 	}
 }
