@@ -14,10 +14,11 @@ func newCmdAdd(cfg *config.Config) *cobra.Command {
 
 	addCmd := &cobra.Command{
 		Use:   "add <path>",
-		Short: "Add a file or directory to your dotfiles",
+		Short: "Add one or more files or directory to your dotfiles",
 		Long:  "Track a configuration file or directory in your dotfiles by creating a symlink to its original location",
 		Example: `  dotx add ~/.bashrc
   dotx add ~/.config/nvim
+  dotx add ~/.bashrc ~/.zshrc
   dotx add -d starship ~/.config/starship.toml`,
 
 		Args: cobra.MinimumNArgs(1),

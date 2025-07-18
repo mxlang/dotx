@@ -39,6 +39,8 @@ func newCmdRoot(cfg *config.Config, version string) *cobra.Command {
 		newCmdAdd(cfg),
 		newCmdDeploy(cfg),
 		newCmdSync(cfg),
+		newCmdCd(cfg),
+		newCmdInitShell(),
 	)
 
 	return rootCmd
