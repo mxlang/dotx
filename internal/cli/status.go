@@ -15,7 +15,7 @@ func newCmdStatus(cfg *config.Config) *cobra.Command {
 		Short: "Show status of dotfiles repository",
 		Long:  "Show if your dotfiles repository is up to date with the remote",
 		Example: `  dotx status
-  dotx status --prompt"`,
+  dotx status --prompt`,
 
 		Args: cobra.NoArgs,
 
