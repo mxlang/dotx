@@ -20,3 +20,7 @@ cover:
 
 tidy:
 	@go mod tidy
+
+update-deps:
+	@go get -u ./...
+	@go mod tidy
