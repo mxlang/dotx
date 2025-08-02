@@ -14,13 +14,9 @@ type dotfile struct {
 	Destination string `yaml:"destination"`
 }
 
-type scripts struct {
-	Init []string `yaml:"init"`
-}
-
 type repoConfig struct {
 	Dotfiles []dotfile `yaml:"dotfiles"`
-	Scripts  scripts   `yaml:"scripts,omitempty"`
+	Scripts  []script  `yaml:"scripts"`
 }
 
 func (r *repoConfig) HasDotfile(source fs.Path) bool {
@@ -56,4 +52,10 @@ func (r *repoConfig) AddDotfile(source fs.Path, dest fs.Path) error {
 	}
 
 	return nil
+}
+
+func (r *repoConfig) ExecuteScripts(event Event) {
+	for _, script := range r.Scripts {
+		script.execute(event)
+	}
 }
