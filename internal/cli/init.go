@@ -1,12 +1,14 @@
 package cli
 
 import (
+	"path/filepath"
 	"slices"
 
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
+	"github.com/mxlang/dotx/internal/script"
 	"github.com/mxlang/dotx/internal/tui"
 	"github.com/spf13/cobra"
 )
@@ -65,7 +67,7 @@ func runInit(cfg *config.Config, opts initOptions, url string) {
 		logger.Info("successfully cloned remote dotfiles")
 	}
 
-	cfg.Repo.ExecuteScripts(config.OnInit)
+	runInitScripts(cfg)
 
 	if opts.deploy {
 		logger.Debug("automatic deploy is active")
@@ -104,4 +106,21 @@ func shouldCloneDotfiles(dir fs.Path, url string) bool {
 	}
 
 	return false
+}
+
+func runInitScripts(cfg *config.Config) {
+	for _, scriptPath := range cfg.Repo.Scripts.Init {
+		fullPath := fs.NewPath(filepath.Join(cfg.RepoPath, scriptPath))
+		if !fullPath.Exists() {
+			logger.Warn("script does not exist", "script", fullPath.AbsPath())
+			continue
+		}
+
+		logger.Info("execute script", "script", fullPath.AbsPath())
+		if err := script.Run(fullPath.AbsPath()); err != nil {
+			logger.Warn(err)
+		} else {
+			logger.Debug("successfully executed script", "script", fullPath.AbsPath())
+		}
+	}
 }

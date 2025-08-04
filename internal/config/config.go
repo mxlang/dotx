@@ -76,14 +76,14 @@ func loadRepoConfig() repoConfig {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			logger.Error("error while reading dotfiles config", "error", err)
+			logger.Warn("error while reading dotfiles config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, &config); err != nil {
-		logger.Error("invalid dotfiles config", "error", err)
+		logger.Warn("invalid dotfiles config", "error", err)
 	}
 
 	return config
