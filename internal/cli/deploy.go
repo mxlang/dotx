@@ -85,4 +85,6 @@ func runDeploy(cfg *config.Config, force bool) {
 
 		logger.Info("successfully deployed", "dotfile", source.Filename())
 	}
+
+	cfg.Repo.ExecuteScripts(config.OnDeploy)
 }

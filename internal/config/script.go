@@ -74,7 +74,7 @@ func (s *script) execute(event Event) {
 
 	path := fs.NewPath(filepath.Join(repoDirPath(), s.Path))
 	if !path.Exists() {
-		logger.Warn("script does not exist", "script", path.AbsPath())
+		logger.Warn("not found", "script", path.AbsPath())
 		return
 	}
 
@@ -87,9 +87,10 @@ func (s *script) execute(event Event) {
 		// TODO check file changed
 	}
 
+	logger.Info("execute", "script", path.AbsPath())
 	if err := cmd.Run(path.AbsPath()); err != nil {
-		logger.Warn(err)
+		logger.Warn("failed to execute", "script", path.AbsPath(), "error", err)
 	} else {
-		logger.Debug("successfully executed script", "script", path.AbsPath())
+		logger.Debug("successfully executed", "script", path.AbsPath())
 	}
 }
