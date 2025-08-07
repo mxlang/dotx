@@ -61,7 +61,7 @@ go install ./cmd/dotx
 #### Setup your shell to use dotx
 
 ```bash
-eval "$(dotx init)"
+eval "$(dotx init <shell>)"
 ```
 
 ## Usage
@@ -146,7 +146,7 @@ dotx deploy --force
 
 ### `cd`
 
-Go to your local dotfiles directory. You need to add `eval "$(dotx init)"` to your shell config to work properly.
+Go to your local dotfiles directory. You need to add `eval "$(dotx init <shell>)"` to your shell config to work properly. It has to be one of the following options: bash, zsh, fish.
 
 Example:
 ```bash
