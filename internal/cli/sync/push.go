@@ -1,13 +1,13 @@
-package cli
+package sync
 
 import (
-	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/core"
 	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
-func newCmdPush(cfg *config.Config) *cobra.Command {
+func newCmdPush(app core.App) *cobra.Command {
 	var commitMessage string
 
 	pushCmd := &cobra.Command{
@@ -20,28 +20,28 @@ func newCmdPush(cfg *config.Config) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			runPush(cfg, commitMessage)
+			runPush(app, commitMessage)
 		},
 	}
 
-	pushCmd.PersistentFlags().StringVarP(&commitMessage, "message", "m", cfg.App.CommitMessage, "Specify a commit message")
+	pushCmd.PersistentFlags().StringVarP(&commitMessage, "message", "m", app.Config.CommitMessage, "Specify a commit message")
 
 	return pushCmd
 }
 
-func runPush(cfg *config.Config, commitMessage string) {
+func runPush(app core.App, commitMessage string) { // TODO move to core.App or own git struct
 	logger.Debug("add changes to dotfiles")
-	if err := git.Add(cfg.RepoPath, "."); err != nil {
+	if err := git.Add(app.Repo.Path, "."); err != nil {
 		logger.Error("failed to add changes", "error", err)
 	}
 
 	logger.Debug("commit changes to dotfiles", "message", commitMessage)
-	if err := git.Commit(cfg.RepoPath, commitMessage); err != nil {
+	if err := git.Commit(app.Repo.Path, commitMessage); err != nil {
 		logger.Error("failed to commit changes", "error", err)
 	}
 
 	logger.Debug("push changes to dotfiles")
-	if err := git.Push(cfg.RepoPath); err != nil {
+	if err := git.Push(app.Repo.Path); err != nil {
 		logger.Error("failed to push changes", "error", err)
 	}
 

@@ -1,8 +1,10 @@
 package config
 
 import (
-	"github.com/adrg/xdg"
 	"path/filepath"
+
+	"github.com/adrg/xdg"
+	"github.com/mxlang/dotx/internal/fs"
 )
 
 const (
@@ -12,18 +14,18 @@ const (
 	repoConfigFile = "dotx.yaml"
 )
 
-func appDirPath() string {
+func appDirPath() string { // TODO change to fs.Path
 	return filepath.Join(xdg.ConfigHome, baseDir)
 }
 
-func appConfigFilePath() string {
+func appConfigFilePath() string { // TODO change to fs.Path
 	return filepath.Join(appDirPath(), appConfigFile)
 }
 
-func repoDirPath() string {
-	return filepath.Join(xdg.DataHome, baseDir, repoDir)
+func repoDirPath() fs.Path {
+	return fs.NewPath(xdg.DataHome, baseDir, repoDir)
 }
 
-func repoConfigFilePath() string {
-	return filepath.Join(repoDirPath(), repoConfigFile)
+func repoConfigFilePath() fs.Path {
+	return repoDirPath().Join(repoConfigFile)
 }

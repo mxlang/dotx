@@ -1,21 +1,23 @@
 package cli
 
 import (
-	"github.com/mxlang/dotx/internal/config"
-	"github.com/mxlang/dotx/internal/logger"
 	"os"
+
+	"github.com/mxlang/dotx/internal/cli/sync"
+	"github.com/mxlang/dotx/internal/core"
+	"github.com/mxlang/dotx/internal/logger"
 
 	"github.com/spf13/cobra"
 )
 
-func Execute(cfg *config.Config, version string) {
-	err := newCmdRoot(cfg, version).Execute()
+func Execute(app core.App, version string) {
+	err := newCmdRoot(app, version).Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
-func newCmdRoot(cfg *config.Config, version string) *cobra.Command {
+func newCmdRoot(app core.App, version string) *cobra.Command {
 	var verbose bool
 
 	rootCmd := &cobra.Command{
@@ -33,14 +35,14 @@ func newCmdRoot(cfg *config.Config, version string) *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", cfg.App.Verbose, "enable verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", app.Config.Verbose, "enable verbose output")
 
 	rootCmd.AddCommand(
-		newCmdAdd(cfg),
-		newCmdDeploy(cfg),
-		newCmdSync(cfg),
-		newCmdCd(cfg),
+		newCmdAdd(app),
+		newCmdDeploy(app),
+		newCmdCd(app),
 		newCmdInitShell(),
+		sync.NewCmdSync(app),
 	)
 
 	return rootCmd

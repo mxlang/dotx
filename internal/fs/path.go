@@ -11,9 +11,9 @@ type Path struct {
 	absPath string
 }
 
-func NewPath(path string) Path {
+func NewPath(path ...string) Path {
 	return Path{
-		absPath: normalizePath(path),
+		absPath: expandPath(filepath.Join(path...)),
 	}
 }
 
@@ -87,7 +87,16 @@ func (p Path) HasSubfiles() bool {
 	return len(files) > 0
 }
 
-func normalizePath(path string) string {
+func (p Path) Join(path ...string) Path {
+	combinedPath := filepath.Join(append([]string{p.absPath}, path...)...)
+	return NewPath(combinedPath)
+}
+
+func (p Path) String() string {
+	return p.absPath
+}
+
+func expandPath(path string) string {
 	// Expand all environment variables in the path
 	path = os.ExpandEnv(path)
 

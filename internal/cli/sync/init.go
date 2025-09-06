@@ -1,10 +1,9 @@
-package cli
+package sync
 
 import (
-	"path/filepath"
 	"slices"
 
-	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/core"
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
@@ -18,65 +17,52 @@ type initOptions struct {
 	force  bool
 }
 
-func newCmdInit(cfg *config.Config) *cobra.Command {
+func newCmdInit(app core.App) *cobra.Command {
 	opts := initOptions{}
 
 	initCmd := &cobra.Command{
 		Use:   "init [repository-url]",
 		Short: "Initialize by cloning a remote dotfiles repository",
 		Long:  "Set up your dotfiles environment by cloning an existing Git repository containing your configuration files and running your configured scripts",
-		Example: `  dotx sync init
-  dotx sync init https://github.com/username/dotfiles.git
+		Example: `  dotx sync init https://github.com/username/dotfiles.git
   dotx sync init https://github.com/username/dotfiles.git --deploy
   dotx sync init https://github.com/username/dotfiles.git --deploy --force`,
 
-		Args: cobra.MaximumNArgs(1),
+		Args: cobra.ExactArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) > 0 {
-				runInit(cfg, opts, args[0])
-			} else {
-				runInit(cfg, opts, "")
-			}
+			runInit(app, opts, args[0])
 		},
 	}
 
-	initCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", cfg.App.DeployOnInit, "automatically deploy dotfiles")
+	initCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", app.Config.DeployOnInit, "automatically deploy dotfiles")
 	initCmd.PersistentFlags().BoolVarP(&opts.force, "force", "f", false, "never prompt for overwriting")
 
 	return initCmd
 }
 
-func runInit(cfg *config.Config, opts initOptions, url string) {
-	repoDir := fs.NewPath(cfg.RepoPath)
-
-	if url == "" && !repoDir.HasSubfiles() {
-		logger.Warn("no dotfiles repository cloned, first run `dotx sync init <repository-url>`")
-		return
-	}
-
-	if url != "" && shouldCloneDotfiles(repoDir, url) {
+func runInit(app core.App, opts initOptions, url string) { // TODO move to core.App or own git struct
+	if shouldCloneDotfiles(app.Repo.Path, url) {
 		logger.Debug("clone remote dotfiles", "url", url)
-		if err := git.Clone(repoDir.AbsPath(), url); err != nil {
+		if err := git.Clone(app.Repo.Path, url); err != nil {
 			logger.Error("failed to clone remote dotfiles", "error", err)
 		}
 
-		// TODO fix me, this is a hack to reload the config
-		cfg = config.Load()
+		app = app.ReloadRepo()
 
 		logger.Info("successfully cloned remote dotfiles")
 	}
 
-	runInitScripts(cfg)
+	runInitScripts(app)
 
 	if opts.deploy {
 		logger.Debug("automatic deploy is active")
-		runDeploy(cfg, opts.force)
+		app.Deploy(opts.force)
 	}
 }
 
 func shouldCloneDotfiles(dir fs.Path, url string) bool {
-	remotes, err := git.Remote(dir.AbsPath())
+	remotes, err := git.Remote(dir)
 	if err != nil {
 		logger.Debug("no remote dotfiles found")
 		return true
@@ -97,7 +83,7 @@ func shouldCloneDotfiles(dir fs.Path, url string) bool {
 			return false
 		}
 
-		logger.Debug("delete", "path", dir.AbsPath())
+		logger.Debug("delete", "path", dir)
 		if err := fs.Delete(dir); err != nil {
 			logger.Error("failed to delete", "error", err)
 		}
@@ -108,19 +94,19 @@ func shouldCloneDotfiles(dir fs.Path, url string) bool {
 	return false
 }
 
-func runInitScripts(cfg *config.Config) {
-	for _, scriptPath := range cfg.Repo.Scripts.Init {
-		fullPath := fs.NewPath(filepath.Join(cfg.RepoPath, scriptPath))
+func runInitScripts(app core.App) { // TODO refactor see https://github.com/mxlang/dotx/pull/21
+	for _, scriptPath := range app.Repo.Scripts.Init {
+		fullPath := app.Repo.Path.Join(scriptPath)
 		if !fullPath.Exists() {
-			logger.Warn("script does not exist", "script", fullPath.AbsPath())
+			logger.Warn("script does not exist", "script", fullPath)
 			continue
 		}
 
-		logger.Info("execute script", "script", fullPath.AbsPath())
+		logger.Info("execute script", "script", fullPath)
 		if err := script.Run(fullPath.AbsPath()); err != nil {
 			logger.Warn(err)
 		} else {
-			logger.Debug("successfully executed script", "script", fullPath.AbsPath())
+			logger.Debug("successfully executed script", "script", fullPath)
 		}
 	}
 }

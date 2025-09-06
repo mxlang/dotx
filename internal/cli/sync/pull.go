@@ -1,7 +1,7 @@
-package cli
+package sync
 
 import (
-	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/core"
 	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
@@ -12,7 +12,7 @@ type pullOptions struct {
 	force  bool
 }
 
-func newCmdPull(cfg *config.Config) *cobra.Command {
+func newCmdPull(app core.App) *cobra.Command {
 	opts := pullOptions{}
 
 	pullCmd := &cobra.Command{
@@ -26,19 +26,19 @@ func newCmdPull(cfg *config.Config) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			runPull(cfg, opts)
+			runPull(app, opts)
 		},
 	}
 
-	pullCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", cfg.App.DeployOnPull, "automatically deploy dotfiles")
+	pullCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", app.Config.DeployOnPull, "automatically deploy dotfiles")
 	pullCmd.PersistentFlags().BoolVarP(&opts.force, "force", "f", false, "never prompt for overwriting")
 
 	return pullCmd
 }
 
-func runPull(cfg *config.Config, opts pullOptions) {
+func runPull(app core.App, opts pullOptions) { // TODO move to core.App or own git struct
 	logger.Debug("pull changes from remote dotfiles")
-	if err := git.Pull(cfg.RepoPath); err != nil {
+	if err := git.Pull(app.Repo.Path); err != nil {
 		logger.Error("failed to pull remote dotfiles", "error", err)
 	}
 
@@ -46,6 +46,6 @@ func runPull(cfg *config.Config, opts pullOptions) {
 
 	if opts.deploy {
 		logger.Debug("automatic deploy is active")
-		runDeploy(cfg, opts.force)
+		app.Deploy(opts.force)
 	}
 }
