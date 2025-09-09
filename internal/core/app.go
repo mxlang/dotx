@@ -1,9 +1,13 @@
 package core
 
 import (
+	"slices"
+
 	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/fs"
+	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
+	"github.com/mxlang/dotx/internal/script"
 	"github.com/mxlang/dotx/internal/tui"
 )
 
@@ -19,21 +23,14 @@ func NewApp(config config.AppConfig, repo config.RepoConfig) App {
 	}
 }
 
-func (a App) ReloadRepo() App {
-	return App{
-		Config: a.Config,
-		Repo:   config.LoadRepoConfig(),
-	}
-}
-
 func (a App) Add(dotfile config.Dotfile, optionalDir string) { // TODO should return error
-	//if optionalDir != "" {
-	//	dir := a.Config.RepoPath.Join(optionalDir)
-	//	if err := fs.Mkdir(dir); err != nil {
-	//		logger.Error("could not create directory", "dir", dir, "error", err)
-	//	}
-	//	source = cfg.RepoPath.Join(optionalDir, filename)
-	//}
+	if optionalDir != "" {
+		dir := a.Repo.Path.Join(optionalDir)
+		if err := fs.Mkdir(dir); err != nil {
+			logger.Error("could not create directory", "dir", dir, "error", err)
+		}
+		dotfile.Source = a.Repo.Path.Join(optionalDir, dotfile.Source.Filename())
+	}
 
 	if a.Repo.HasDotfile(dotfile) {
 		logger.Error("already exists in dotfiles", "dotfile", dotfile.Source.Filename())
@@ -108,4 +105,107 @@ func (a App) Deploy(force bool) { // TODO should return error
 
 		logger.Info("successfully deployed", "dotfile", dotfile.Source.Filename())
 	}
+}
+
+func (a App) Init(url string, deploy bool, force bool) { // TODO should return error
+	if shouldCloneDotfiles(a.Repo.Path, url) {
+		logger.Debug("clone remote dotfiles", "url", url)
+		if err := git.Clone(a.Repo.Path, url); err != nil {
+			logger.Error("failed to clone remote dotfiles", "error", err)
+		}
+
+		a.Repo = config.LoadRepoConfig()
+
+		logger.Info("successfully cloned remote dotfiles")
+	}
+
+	a.runInitScripts()
+
+	if deploy {
+		logger.Debug("automatic deploy is active")
+		a.Deploy(force)
+	}
+}
+
+func shouldCloneDotfiles(dir fs.Path, url string) bool {
+	remotes, err := git.Remote(dir)
+	if err != nil {
+		logger.Debug("no remote dotfiles found")
+		return true
+	}
+
+	if !slices.Contains(remotes, url) {
+		overwrite, err := tui.Confirm(
+			"Directory is already another Git repository. Overwrite?",
+			"",
+		)
+
+		if err != nil {
+			logger.Error("failed to render TUI", "error", err)
+		}
+
+		if !overwrite {
+			logger.Debug("overwrite cancelled")
+			return false
+		}
+
+		logger.Debug("delete", "path", dir)
+		if err := fs.Delete(dir); err != nil {
+			logger.Error("failed to delete", "error", err)
+		}
+
+		return overwrite
+	}
+
+	return false
+}
+
+func (a App) runInitScripts() { // TODO refactor see https://github.com/mxlang/dotx/pull/21
+	for _, scriptPath := range a.Repo.Scripts.Init {
+		fullPath := a.Repo.Path.Join(scriptPath)
+		if !fullPath.Exists() {
+			logger.Warn("script does not exist", "script", fullPath)
+			continue
+		}
+
+		logger.Info("execute script", "script", fullPath)
+		if err := script.Run(fullPath.AbsPath()); err != nil {
+			logger.Warn(err)
+		} else {
+			logger.Debug("successfully executed script", "script", fullPath)
+		}
+	}
+}
+
+func (a App) Pull(deploy bool, force bool) { // TODO should return error
+	logger.Debug("pull changes from remote dotfiles")
+	if err := git.Pull(a.Repo.Path); err != nil {
+		logger.Error("failed to pull remote dotfiles", "error", err)
+	}
+
+	logger.Info("successfully pulled from remote dotfiles")
+
+	if deploy {
+		logger.Debug("automatic deploy is active")
+		a.Deploy(force)
+	}
+}
+
+func (a App) Push(commitMessage string) { // TODO should return error
+	logger.Debug("add changes to dotfiles")
+	if err := git.Add(a.Repo.Path, "."); err != nil {
+		logger.Error("failed to add changes", "error", err)
+	}
+
+	logger.Debug("commit changes to dotfiles", "message", commitMessage)
+	if err := git.Commit(a.Repo.Path, commitMessage); err != nil {
+		logger.Error("failed to commit changes", "error", err)
+	}
+
+	logger.Debug("push changes to dotfiles")
+	if err := git.Push(a.Repo.Path); err != nil {
+		logger.Error("failed to push changes", "error", err)
+	}
+
+	logger.Info("successfully pushed changes to remote dotfiles")
 }

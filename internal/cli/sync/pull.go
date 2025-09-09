@@ -2,8 +2,6 @@ package sync
 
 import (
 	"github.com/mxlang/dotx/internal/core"
-	"github.com/mxlang/dotx/internal/git"
-	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +24,7 @@ func newCmdPull(app core.App) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			runPull(app, opts)
+			app.Pull(opts.deploy, opts.force)
 		},
 	}
 
@@ -34,18 +32,4 @@ func newCmdPull(app core.App) *cobra.Command {
 	pullCmd.PersistentFlags().BoolVarP(&opts.force, "force", "f", false, "never prompt for overwriting")
 
 	return pullCmd
-}
-
-func runPull(app core.App, opts pullOptions) { // TODO move to core.App or own git struct
-	logger.Debug("pull changes from remote dotfiles")
-	if err := git.Pull(app.Repo.Path); err != nil {
-		logger.Error("failed to pull remote dotfiles", "error", err)
-	}
-
-	logger.Info("successfully pulled from remote dotfiles")
-
-	if opts.deploy {
-		logger.Debug("automatic deploy is active")
-		app.Deploy(opts.force)
-	}
 }

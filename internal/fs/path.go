@@ -74,19 +74,6 @@ func (p Path) SymlinkPath() string {
 	return ""
 }
 
-func (p Path) HasSubfiles() bool {
-	if !p.IsDir() {
-		return false
-	}
-
-	files, err := os.ReadDir(p.absPath)
-	if err != nil {
-		return false
-	}
-
-	return len(files) > 0
-}
-
 func (p Path) Join(path ...string) Path {
 	combinedPath := filepath.Join(append([]string{p.absPath}, path...)...)
 	return NewPath(combinedPath)
