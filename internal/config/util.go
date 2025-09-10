@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/adrg/xdg"
 	"path/filepath"
+
+	"github.com/adrg/xdg"
 )
 
 const (
@@ -10,6 +11,7 @@ const (
 	appConfigFile  = "config.yaml"
 	repoDir        = "dotfiles"
 	repoConfigFile = "dotx.yaml"
+	dataConfigFile = "data.yaml"
 )
 
 func appDirPath() string {
@@ -26,4 +28,8 @@ func repoDirPath() string {
 
 func repoConfigFilePath() string {
 	return filepath.Join(repoDirPath(), repoConfigFile)
+}
+
+func dataConfigFilePath() string {
+	return filepath.Join(xdg.DataHome, baseDir, dataConfigFile)
 }

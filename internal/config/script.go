@@ -9,23 +9,23 @@ import (
 	"github.com/mxlang/dotx/internal/logger"
 )
 
-type Event string
+type event string
 
 const (
-	OnInit   Event = "init"
-	OnPull   Event = "pull"
-	OnDeploy Event = "deploy"
+	OnInit   event = "init"
+	OnPull   event = "pull"
+	OnDeploy event = "deploy"
 )
 
-func (e *Event) UnmarshalYAML(unmarshal func(any) error) error {
+func (e *event) UnmarshalYAML(unmarshal func(any) error) error {
 	var value string
 	if err := unmarshal(&value); err != nil {
 		return err
 	}
 
-	switch Event(value) {
+	switch event(value) {
 	case OnInit, OnPull, OnDeploy:
-		*e = Event(value)
+		*e = event(value)
 		return nil
 	default:
 		return fmt.Errorf("invalid on value: %s. Must be one of: %s, %s, %s", value, OnInit, OnPull, OnDeploy)
@@ -56,18 +56,12 @@ func (r *runCondition) UnmarshalYAML(unmarshal func(any) error) error {
 }
 
 type script struct {
-	Path         string       `yaml:"path"`
-	Event        Event        `yaml:"on"`
+	Path         string       `yaml:"path"` // TODO change type to fs.Path
+	Event        event        `yaml:"on"`
 	RunCondition runCondition `yaml:"run,omitempty"`
 }
 
-type scripts []script
-
-func (s *scripts) filter(event Event) {
-	// TODO filter scripts by event
-}
-
-func (s *script) execute(event Event) {
+func (s *script) execute(event event) {
 	if s.Event != event {
 		return
 	}
@@ -78,16 +72,37 @@ func (s *script) execute(event Event) {
 		return
 	}
 
+	data := loadDataConfig()
+
 	switch s.RunCondition {
 	case runOnce:
-		fmt.Println("run condition is once")
-		// TODO check file already executed
+		if data.alreadyExecuted(*s) {
+			logger.Debug("already executed", "script", path.AbsPath())
+			return
+		}
+
+		if err := data.addScript(*s); err != nil {
+			logger.Error("failed to write data config", "error", err)
+		}
 	case runChanged:
-		fmt.Println("run condition is changed")
-		// TODO check file changed
+		if data.alreadyExecuted(*s) {
+			if data.hashChanged(*s) {
+				logger.Debug("hash changed", "script", path.AbsPath())
+				if err := data.updateScript(*s); err != nil {
+					logger.Error("failed to write data config", "error", err)
+				}
+			} else {
+				logger.Debug("hash not changed", "script", path.AbsPath())
+				return
+			}
+		} else {
+			if err := data.addScript(*s); err != nil {
+				logger.Error("failed to write data config", "error", err)
+			}
+		}
 	}
 
-	logger.Info("execute", "script", path.AbsPath())
+	logger.Info("execute", "script", path.AbsPath(), "on", s.Event, "run", s.RunCondition)
 	if err := cmd.Run(path.AbsPath()); err != nil {
 		logger.Warn("failed to execute", "script", path.AbsPath(), "error", err)
 	} else {
