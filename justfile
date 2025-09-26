@@ -12,6 +12,9 @@ build:
 install:
 	@go install -ldflags="{{LD_FLAGS}}" {{MAIN_PACKAGE}}
 
+test:
+	@go test ./...
+
 tidy:
 	@go mod tidy
 

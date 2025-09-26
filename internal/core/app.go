@@ -7,7 +7,6 @@ import (
 	"github.com/mxlang/dotx/internal/fs"
 	"github.com/mxlang/dotx/internal/git"
 	"github.com/mxlang/dotx/internal/logger"
-	"github.com/mxlang/dotx/internal/script"
 	"github.com/mxlang/dotx/internal/tui"
 )
 
@@ -105,6 +104,8 @@ func (a App) Deploy(force bool) { // TODO should return error
 
 		logger.Info("successfully deployed", "dotfile", dotfile.Source.Filename())
 	}
+
+	a.Repo.ExecuteScripts(config.OnDeploy)
 }
 
 func (a App) Init(url string, deploy bool, force bool) { // TODO should return error
@@ -119,7 +120,7 @@ func (a App) Init(url string, deploy bool, force bool) { // TODO should return e
 		logger.Info("successfully cloned remote dotfiles")
 	}
 
-	a.runInitScripts()
+	a.Repo.ExecuteScripts(config.OnInit)
 
 	if deploy {
 		logger.Debug("automatic deploy is active")
@@ -160,23 +161,6 @@ func shouldCloneDotfiles(dir fs.Path, url string) bool {
 	return false
 }
 
-func (a App) runInitScripts() { // TODO refactor see https://github.com/mxlang/dotx/pull/21
-	for _, scriptPath := range a.Repo.Scripts.Init {
-		fullPath := a.Repo.Path.Join(scriptPath)
-		if !fullPath.Exists() {
-			logger.Warn("script does not exist", "script", fullPath)
-			continue
-		}
-
-		logger.Info("execute script", "script", fullPath)
-		if err := script.Run(fullPath.AbsPath()); err != nil {
-			logger.Warn(err)
-		} else {
-			logger.Debug("successfully executed script", "script", fullPath)
-		}
-	}
-}
-
 func (a App) Pull(deploy bool, force bool) { // TODO should return error
 	logger.Debug("pull changes from remote dotfiles")
 	if err := git.Pull(a.Repo.Path); err != nil {
@@ -184,6 +168,8 @@ func (a App) Pull(deploy bool, force bool) { // TODO should return error
 	}
 
 	logger.Info("successfully pulled from remote dotfiles")
+
+	a.Repo.ExecuteScripts(config.OnPull)
 
 	if deploy {
 		logger.Debug("automatic deploy is active")

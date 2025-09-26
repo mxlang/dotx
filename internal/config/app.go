@@ -10,8 +10,6 @@ import (
 )
 
 type AppConfig struct {
-	//RepoPath fs.Path
-
 	Verbose       bool   `yaml:"verbose"`
 	CommitMessage string `yaml:"commitMessage"`
 	DeployOnInit  bool   `yaml:"deployOnInit"`
@@ -31,14 +29,14 @@ func LoadAppConfig() AppConfig {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			logger.Warn("error while reading dotx config", "error", err)
+			logger.Error("error while reading dotx config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, &config); err != nil {
-		logger.Warn("invalid dotx config", "error", err)
+		logger.Error("invalid dotx config", "error", err)
 	}
 
 	return config
@@ -46,8 +44,6 @@ func LoadAppConfig() AppConfig {
 
 func defaultAppConfig() AppConfig {
 	return AppConfig{
-		//RepoPath: repoDirPath(),
-
 		Verbose:       false,
 		CommitMessage: "update dotfiles",
 		DeployOnPull:  false,

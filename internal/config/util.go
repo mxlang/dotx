@@ -12,6 +12,7 @@ const (
 	appConfigFile  = "config.yaml"
 	repoDir        = "dotfiles"
 	repoConfigFile = "dotx.yaml"
+	dataConfigFile = "data.yaml"
 )
 
 func appDirPath() string { // TODO change to fs.Path
@@ -28,4 +29,8 @@ func repoDirPath() fs.Path {
 
 func repoConfigFilePath() fs.Path {
 	return repoDirPath().Join(repoConfigFile)
+}
+
+func dataConfigFilePath() fs.Path {
+	return fs.NewPath(xdg.DataHome, baseDir, dataConfigFile)
 }

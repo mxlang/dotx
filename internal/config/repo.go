@@ -10,15 +10,11 @@ import (
 	"github.com/mxlang/dotx/internal/logger"
 )
 
-type scripts struct {
-	Init []string `yaml:"init"`
-}
-
 type RepoConfig struct {
 	Path fs.Path
 
 	Dotfiles []Dotfile `yaml:"dotfiles"`
-	Scripts  scripts   `yaml:"scripts,omitempty"`
+	Scripts  []script  `yaml:"scripts"`
 }
 
 func (r *RepoConfig) HasDotfile(dotfile Dotfile) bool {
@@ -46,6 +42,12 @@ func (r *RepoConfig) AddDotfile(dotfile Dotfile) error {
 	return nil
 }
 
+func (r *RepoConfig) ExecuteScripts(e event) {
+	for _, script := range r.Scripts {
+		script.execute(e)
+	}
+}
+
 func LoadRepoConfig() RepoConfig {
 	// Ensure the dotfiles directory exists
 	if err := fs.Mkdir(repoDirPath()); err != nil {
@@ -60,14 +62,14 @@ func LoadRepoConfig() RepoConfig {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			logger.Warn("error while reading dotfiles config", "error", err)
+			logger.Error("error while reading dotfiles config", "error", err)
 		}
 
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, &config); err != nil {
-		logger.Warn("invalid dotfiles config", "error", err)
+		logger.Error("invalid dotfiles config", "error", err)
 	}
 
 	return config
