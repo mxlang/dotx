@@ -44,6 +44,8 @@ func runPull(cfg *config.Config, opts pullOptions) {
 
 	logger.Info("successfully pulled from remote dotfiles")
 
+	cfg.Repo.ExecuteScripts(config.OnPull)
+
 	if opts.deploy {
 		logger.Debug("automatic deploy is active")
 		runDeploy(cfg, opts.force)

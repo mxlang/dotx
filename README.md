@@ -58,7 +58,7 @@ cd dotx
 go install ./cmd/dotx
 ```
 
-#### Setup your shell to use dotx
+#### Set up your shell to use dotx
 
 ```bash
 eval "$(dotx init <shell>)"
