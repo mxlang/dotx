@@ -22,7 +22,7 @@ func newCmdPush(app core.App) *cobra.Command {
 		},
 	}
 
-	pushCmd.PersistentFlags().StringVarP(&commitMessage, "message", "m", app.Config.CommitMessage, "Specify a commit message")
+	pushCmd.PersistentFlags().StringVarP(&commitMessage, "message", "m", "", "Specify a commit message")
 
 	return pushCmd
 }

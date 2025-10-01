@@ -183,6 +183,15 @@ func (a App) Push(commitMessage string) { // TODO should return error
 		logger.Error("failed to add changes", "error", err)
 	}
 
+	if commitMessage == "" {
+		msg, err := tui.Text("Write your commit message")
+		if err != nil {
+			logger.Error("failed to render TUI", "error", err)
+		}
+
+		commitMessage = msg
+	}
+
 	logger.Debug("commit changes to dotfiles", "message", commitMessage)
 	if err := git.Commit(a.Repo.Path, commitMessage); err != nil {
 		logger.Error("failed to commit changes", "error", err)

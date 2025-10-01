@@ -59,6 +59,8 @@ type script struct {
 	Path         fs.Path      `yaml:"path"`
 	Event        event        `yaml:"on"`
 	RunCondition runCondition `yaml:"run,omitempty"`
+	// TODO maybe add before and after hook
+	// special handling for init it can only run once so the condition is not needed
 }
 
 func (s *script) UnmarshalYAML(unmarshal func(any) error) error {

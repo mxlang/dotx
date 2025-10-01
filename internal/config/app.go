@@ -10,10 +10,9 @@ import (
 )
 
 type AppConfig struct {
-	Verbose       bool   `yaml:"verbose"`
-	CommitMessage string `yaml:"commitMessage"`
-	DeployOnInit  bool   `yaml:"deployOnInit"`
-	DeployOnPull  bool   `yaml:"deployOnPull"`
+	Verbose      bool `yaml:"verbose"`
+	DeployOnInit bool `yaml:"deployOnInit"`
+	DeployOnPull bool `yaml:"deployOnPull"`
 }
 
 func LoadAppConfig() AppConfig {
@@ -44,9 +43,8 @@ func LoadAppConfig() AppConfig {
 
 func defaultAppConfig() AppConfig {
 	return AppConfig{
-		Verbose:       false,
-		CommitMessage: "update dotfiles",
-		DeployOnPull:  false,
-		DeployOnInit:  false,
+		Verbose:      false,
+		DeployOnPull: false,
+		DeployOnInit: false,
 	}
 }

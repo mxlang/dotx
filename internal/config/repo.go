@@ -11,10 +11,10 @@ import (
 )
 
 type RepoConfig struct {
-	Path fs.Path
+	Path fs.Path `yaml:"-"`
 
 	Dotfiles []Dotfile `yaml:"dotfiles"`
-	Scripts  []script  `yaml:"scripts"`
+	Scripts  []script  `yaml:"scripts,omitempty"`
 }
 
 func (r *RepoConfig) HasDotfile(dotfile Dotfile) bool {
