@@ -114,7 +114,7 @@ All commands support the following flags:
 Add one or more files or directories to your dotfiles. This command tracks configuration files or directories in your dotfiles by creating symlinks to their original locations.
 
 ```bash
-dotx add <path> [-d, --dir]
+dotx add <path>... [-d, --dir]
 ```
 
 Options:
@@ -124,6 +124,7 @@ Example:
 ```bash
 dotx add ~/.bashrc
 dotx add ~/.config/nvim
+dotx add ~/.bashrc ~/.zshrc
 dotx add -d starship ~/.config/starship.toml
 ```
 
@@ -202,7 +203,7 @@ dotx sync push [-m, --message <commit-message>]
 ```
 
 Options:
-- `-m, --message`: Specify a commit message (if not provided, opens an editor to enter a message)
+- `-m, --message`: Specify a commit message (if not provided, you'll be prompted to enter one)
 
 Example:
 ```bash
