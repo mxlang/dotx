@@ -1,9 +1,8 @@
 package cli
 
 import (
-	"github.com/mxlang/dotx/internal/config"
 	"github.com/mxlang/dotx/internal/core"
-	"github.com/mxlang/dotx/internal/fs"
+	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -22,17 +21,8 @@ func newCmdAdd(app core.App) *cobra.Command {
 		Args: cobra.MinimumNArgs(1),
 
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, path := range args {
-				dest := fs.NewPath(path)
-				filename := dest.Filename()
-				source := app.Repo.Path.Join(filename)
-
-				dotfile := config.Dotfile{
-					Source:      source,
-					Destination: dest,
-				}
-
-				app.Add(dotfile, optionalDir)
+			if err := app.Add(args, optionalDir); err != nil {
+				logger.Error("failed to add new dotfile", "error", err)
 			}
 		},
 	}

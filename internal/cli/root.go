@@ -38,10 +38,14 @@ func newCmdRoot(app core.App, version string) *cobra.Command {
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", app.Config.Verbose, "enable verbose output")
 
 	rootCmd.AddCommand(
+		newCmdInitShell(),
+
+		// commands
 		newCmdAdd(app),
 		newCmdDeploy(app),
 		newCmdCd(app),
-		newCmdInitShell(),
+
+		// subcommand sync
 		sync.NewCmdSync(app),
 	)
 

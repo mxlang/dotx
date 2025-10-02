@@ -18,6 +18,5 @@ test:
 tidy:
 	@go mod tidy
 
-update-deps:
+update-deps: && tidy
 	@go get -u ./...
-	@go mod tidy
