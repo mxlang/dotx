@@ -44,6 +44,7 @@ func newCmdRoot(app core.App, version string) *cobra.Command {
 		newCmdAdd(app),
 		newCmdDeploy(app),
 		newCmdCd(app),
+		newCmdDoctor(app),
 
 		// subcommand sync
 		sync.NewCmdSync(app),

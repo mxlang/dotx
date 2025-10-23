@@ -154,6 +154,23 @@ Example:
 dotx cd
 ```
 
+### `doctor`
+
+Inspect your system and repository for undeployed dotfiles and help you link them. This command scans your dotx repository for dotfiles that are not currently deployed (i.e., not symlinked in their destination paths) and presents a TUI to choose which ones to deploy.
+
+```bash
+dotx doctor [-f, --force]
+```
+
+Options:
+- `-f, --force`: Never prompt for overwriting existing files when deploying selected dotfiles
+
+Example:
+```bash
+dotx doctor
+dotx doctor --force # Deploy without any overwrite prompts
+```
+
 ### `sync`
 
 Manage Git operations for your dotfiles repository. This command provides subcommands for initializing, pulling, and pushing changes to synchronize your dotfiles across systems.

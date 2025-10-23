@@ -23,9 +23,14 @@ func (a App) Deploy(force bool) error {
 func deploy(dotfile config.Dotfile, force bool) error {
 	logger.Debug("deploy dotfile", "from", dotfile.Source, "to", dotfile.Destination)
 
+	if !dotfile.Source.Exists() {
+		logger.Warn("configured dotfile does not exist", "dotfile", dotfile.TruncateRepoPath())
+		return nil
+	}
+
 	if dotfile.Destination.Exists() {
-		if dotfile.Destination.IsSymlink() && dotfile.Destination.SymlinkPath() == dotfile.Source.AbsPath() {
-			logger.Debug("dotfile already deployed with dotx", "dotfile", dotfile.Source.Filename())
+		if dotfile.Deployed() {
+			logger.Debug("dotfile already deployed with dotx", "dotfile", dotfile.TruncateRepoPath())
 			return nil
 		}
 
@@ -68,6 +73,6 @@ func deploy(dotfile config.Dotfile, force bool) error {
 		return fmt.Errorf("failed to create symlink: %w", err)
 	}
 
-	logger.Info("successfully deployed", "dotfile", dotfile.Source.Filename())
+	logger.Info("successfully deployed", "dotfile", dotfile.TruncateRepoPath())
 	return nil
 }

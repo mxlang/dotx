@@ -36,9 +36,17 @@ func (d Dotfile) MarshalYAML() (any, error) {
 
 	home, _ := os.UserHomeDir()
 	a := temp{
-		Source:      strings.Replace(d.Source.AbsPath(), repoDirPath().AbsPath(), "", 1),
+		Source:      d.TruncateRepoPath(),
 		Destination: strings.Replace(d.Destination.AbsPath(), home, "$HOME", 1),
 	}
 
 	return a, nil
+}
+
+func (d Dotfile) Deployed() bool {
+	return d.Destination.IsSymlink() && d.Destination.SymlinkPath() == d.Source.AbsPath()
+}
+
+func (d Dotfile) TruncateRepoPath() string {
+	return strings.Replace(d.Source.AbsPath(), repoDirPath().AbsPath(), "", 1)
 }

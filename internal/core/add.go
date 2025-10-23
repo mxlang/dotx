@@ -55,6 +55,6 @@ func add(repo config.RepoConfig, dotfile config.Dotfile) error {
 		return fmt.Errorf("failed to write dotfiles config: %w", err)
 	}
 
-	logger.Info("successfully added", "dotfile", dotfile.Source.Filename())
+	logger.Info("successfully added", "dotfile", dotfile.TruncateRepoPath())
 	return nil
 }
