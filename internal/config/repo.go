@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 
 	"github.com/goccy/go-yaml"
 	"github.com/mxlang/dotx/internal/fs"
@@ -18,13 +19,7 @@ type RepoConfig struct {
 }
 
 func (r *RepoConfig) HasDotfile(dotfile Dotfile) bool {
-	for _, dot := range r.Dotfiles {
-		if dot == dotfile {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(r.Dotfiles, dotfile)
 }
 
 func (r *RepoConfig) AddDotfile(dotfile Dotfile) error {
