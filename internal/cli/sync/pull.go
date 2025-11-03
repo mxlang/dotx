@@ -2,6 +2,7 @@ package sync
 
 import (
 	"github.com/mxlang/dotx/internal/core"
+	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +25,9 @@ func newCmdPull(app core.App) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			app.Pull(opts.deploy, opts.force)
+			if err := app.Pull(opts.deploy, opts.force); err != nil {
+				logger.Error("failed to pull dotfiles", "error", err)
+			}
 		},
 	}
 

@@ -5,8 +5,8 @@ import (
 	"os/exec"
 )
 
-func Run(command string) error {
-	cmd := exec.Command(command)
+func Run(command string, args ...string) error {
+	cmd := exec.Command(command, args...)
 
 	cmd.Stdin = os.Stdin   // pass input from terminal/user
 	cmd.Stdout = os.Stdout // print output to terminal

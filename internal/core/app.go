@@ -1,13 +1,7 @@
 package core
 
 import (
-	"slices"
-
 	"github.com/mxlang/dotx/internal/config"
-	"github.com/mxlang/dotx/internal/fs"
-	"github.com/mxlang/dotx/internal/git"
-	"github.com/mxlang/dotx/internal/logger"
-	"github.com/mxlang/dotx/internal/tui"
 )
 
 type App struct {
@@ -20,101 +14,4 @@ func NewApp(config config.AppConfig, repo config.RepoConfig) App {
 		Config: config,
 		Repo:   repo,
 	}
-}
-
-func (a App) Init(url string, deploy bool, force bool) { // TODO should return error
-	if shouldCloneDotfiles(a.Repo.Path, url) {
-		logger.Debug("clone remote dotfiles", "url", url)
-		if err := git.Clone(a.Repo.Path, url); err != nil {
-			logger.Error("failed to clone remote dotfiles", "error", err)
-		}
-
-		a.Repo = config.LoadRepoConfig()
-
-		logger.Info("successfully cloned remote dotfiles")
-	}
-
-	a.Repo.ExecuteScripts(config.OnInit)
-
-	if deploy {
-		logger.Debug("automatic deploy is active")
-		a.Deploy(force)
-	}
-}
-
-func shouldCloneDotfiles(dir fs.Path, url string) bool {
-	remotes, err := git.Remote(dir)
-	if err != nil {
-		logger.Debug("no remote dotfiles found")
-		return true
-	}
-
-	if !slices.Contains(remotes, url) {
-		overwrite, err := tui.Confirm(
-			"Directory is already another Git repository. Overwrite?",
-			"",
-		)
-
-		if err != nil {
-			logger.Error("failed to render TUI", "error", err)
-		}
-
-		if !overwrite {
-			logger.Debug("overwrite cancelled")
-			return false
-		}
-
-		logger.Debug("delete", "path", dir)
-		if err := fs.Delete(dir); err != nil {
-			logger.Error("failed to delete", "error", err)
-		}
-
-		return overwrite
-	}
-
-	return false
-}
-
-func (a App) Pull(deploy bool, force bool) { // TODO should return error
-	logger.Debug("pull changes from remote dotfiles")
-	if err := git.Pull(a.Repo.Path); err != nil {
-		logger.Error("failed to pull remote dotfiles", "error", err)
-	}
-
-	logger.Info("successfully pulled from remote dotfiles")
-
-	a.Repo.ExecuteScripts(config.OnPull)
-
-	if deploy {
-		logger.Debug("automatic deploy is active")
-		a.Deploy(force)
-	}
-}
-
-func (a App) Push(commitMessage string) { // TODO should return error
-	logger.Debug("add changes to dotfiles")
-	if err := git.Add(a.Repo.Path, "."); err != nil {
-		logger.Error("failed to add changes", "error", err)
-	}
-
-	if commitMessage == "" {
-		msg, err := tui.Text("Write your commit message")
-		if err != nil {
-			logger.Error("failed to render TUI", "error", err)
-		}
-
-		commitMessage = msg
-	}
-
-	logger.Debug("commit changes to dotfiles", "message", commitMessage)
-	if err := git.Commit(a.Repo.Path, commitMessage); err != nil {
-		logger.Error("failed to commit changes", "error", err)
-	}
-
-	logger.Debug("push changes to dotfiles")
-	if err := git.Push(a.Repo.Path); err != nil {
-		logger.Error("failed to push changes", "error", err)
-	}
-
-	logger.Info("successfully pushed changes to remote dotfiles")
 }

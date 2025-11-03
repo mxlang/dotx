@@ -2,6 +2,7 @@ package sync
 
 import (
 	"github.com/mxlang/dotx/internal/core"
+	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +19,9 @@ func newCmdPush(app core.App) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			app.Push(commitMessage)
+			if err := app.Push(commitMessage); err != nil {
+				logger.Error("failed to push dotfiles", "error", err)
+			}
 		},
 	}
 

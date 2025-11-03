@@ -130,7 +130,7 @@ func computeFileHash(path fs.Path) (string, error) {
 	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
-func loadDataConfig() dataConfig {
+func loadDataConfig() (dataConfig, error) {
 	content, err := os.ReadFile(dataConfigFilePath().AbsPath())
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
@@ -140,8 +140,8 @@ func loadDataConfig() dataConfig {
 
 	config := dataConfig{}
 	if err := yaml.Unmarshal(content, &config); err != nil {
-		logger.Error("invalid data config", "error", err)
+		return config, fmt.Errorf("invalid data config: %w", err)
 	}
 
-	return config
+	return config, nil
 }

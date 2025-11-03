@@ -115,7 +115,11 @@ func (s script) execute(event event) {
 		return
 	}
 
-	data := loadDataConfig()
+	data, err := loadDataConfig()
+	if err != nil {
+		logger.Warn("unable to load data config", "error", err)
+		return
+	}
 
 	switch s.RunCondition {
 	case runOnce:
