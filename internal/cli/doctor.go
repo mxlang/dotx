@@ -10,10 +10,11 @@ func newCmdDoctor(app core.App) *cobra.Command {
 	var force bool
 
 	doctorCmd := &cobra.Command{
-		Use:     "doctor",
-		Short:   "",
-		Long:    "",
-		Example: `  `,
+		Use:   "doctor",
+		Short: "Scan for unlinked dotfiles and offer to deploy them",
+		Long:  "Inspect your dotx repository and current system for dotfiles that exist in the repo but are not yet deployed (symlinked). Choose which ones to link. Use --force to never prompt when overwriting.",
+		Example: `  dotx doctor
+  dotx doctor --force`,
 
 		Args: cobra.NoArgs,
 

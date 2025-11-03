@@ -78,15 +78,15 @@ func (d dataConfig) hashChanged(s script) bool {
 }
 
 func (d dataConfig) addScript(s script) error {
-	h, err := computeFileHash(s.Path)
+	hash, err := computeFileHash(s.Path)
 	if err != nil {
 		return fmt.Errorf("unable to compute script hash: %w", err)
 	}
 
 	if idx, found := d.findRecord(s.Path); found {
-		d.Scripts[idx].Hash = h
+		d.Scripts[idx].Hash = hash
 	} else {
-		d.Scripts = append(d.Scripts, executedScript{Path: s.Path, Hash: h})
+		d.Scripts = append(d.Scripts, executedScript{Path: s.Path, Hash: hash})
 	}
 
 	return d.save()
