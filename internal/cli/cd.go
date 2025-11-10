@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mxlang/dotx/internal/config"
+	"github.com/mxlang/dotx/internal/core"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
@@ -40,7 +40,7 @@ func newCmdInitShell() *cobra.Command {
 	}
 }
 
-func newCmdCd(cfg *config.Config) *cobra.Command {
+func newCmdCd(app core.App) *cobra.Command {
 	return &cobra.Command{
 		Use:     "cd",
 		Short:   "Go to your local dotfiles directory",
@@ -49,7 +49,7 @@ func newCmdCd(cfg *config.Config) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(cfg.RepoPath)
+			fmt.Println(app.Repo.Path)
 		},
 	}
 }

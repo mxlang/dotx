@@ -111,10 +111,10 @@ All commands support the following flags:
 
 ### `add`
 
-Add a file or directory to your dotfiles. This command tracks a configuration file or directory in your dotfiles by creating a symlink to its original location.
+Add one or more files or directories to your dotfiles. This command tracks configuration files or directories in your dotfiles by creating symlinks to their original locations.
 
 ```bash
-dotx add <path> [-d, --dir]
+dotx add <path>... [-d, --dir]
 ```
 
 Options:
@@ -124,6 +124,7 @@ Example:
 ```bash
 dotx add ~/.bashrc
 dotx add ~/.config/nvim
+dotx add ~/.bashrc ~/.zshrc
 dotx add -d starship ~/.config/starship.toml
 ```
 
@@ -153,16 +154,33 @@ Example:
 dotx cd
 ```
 
+### `doctor`
+
+Inspect your system and repository for undeployed dotfiles and help you link them. This command scans your dotx repository for dotfiles that are not currently deployed (i.e., not symlinked in their destination paths) and presents a TUI to choose which ones to deploy.
+
+```bash
+dotx doctor [-f, --force]
+```
+
+Options:
+- `-f, --force`: Never prompt for overwriting existing files when deploying selected dotfiles
+
+Example:
+```bash
+dotx doctor
+dotx doctor --force # Deploy without any overwrite prompts
+```
+
 ### `sync`
 
 Manage Git operations for your dotfiles repository. This command provides subcommands for initializing, pulling, and pushing changes to synchronize your dotfiles across systems.
 
 #### `sync init`
 
-Initialize by cloning a remote dotfiles repository. This command sets up your dotfiles environment by cloning an existing Git repository containing your configuration files and running your configured scripts. You can run `dotx sync init` without a URL if you have already cloned a remote repository. This will execute the init scripts again.
+Initialize by cloning a remote dotfiles repository. This command sets up your dotfiles environment by cloning an existing Git repository containing your configuration files.
 
 ```bash
-dotx sync init [repository-url] [-d, --deploy] [-f, --force]
+dotx sync init <repository-url> [-d, --deploy] [-f, --force]
 ```
 
 Options:
@@ -171,7 +189,6 @@ Options:
 
 Example:
 ```bash
-dotx sync init
 dotx sync init https://github.com/username/dotfiles.git
 dotx sync init https://github.com/username/dotfiles.git --deploy --force
 ```
@@ -203,7 +220,7 @@ dotx sync push [-m, --message <commit-message>]
 ```
 
 Options:
-- `-m, --message`: Specify a commit message (if not provided, uses the default commit message from config)
+- `-m, --message`: Specify a commit message (if not provided, you'll be prompted to enter one)
 
 Example:
 ```bash
@@ -211,18 +228,6 @@ dotx sync push
 dotx sync push -m "Update bash aliases"
 ```
 
-#### `sync status`
-
-Show if your dotfiles repository is up to date with the remote.
-
-Options:
-- `-p, --prompt`: Return a boolean that can be used in your shell prompt to indicate your dotfiles repository status
-
-Example:
-```bash
-dotx sync status
-dotx sync status --prompt
-```
 
 ## Configuration
 
@@ -234,7 +239,6 @@ Located at `$XDG_CONFIG_HOME/dotx/config.yaml` (typically `~/.config/dotx/config
 
 ```yaml
 verbose: true                            # Enable verbose logging
-commitMessage: "default commit message"  # Default commit message for sync push
 deployOnInit: true                       # Automatically deploy dotfiles after initialization
 deployOnPull: true                       # Automatically deploy dotfiles after pulling
 ```
@@ -252,12 +256,15 @@ dotfiles:
   - source: "/.config/nvim"
     destination: "$HOME/.config/nvim"
 scripts:
-  init:
-    - setup.sh
-    - scripts/bootstrap.sh
+  - path: "setup.sh"
+    on: init           # one of: init, pull, deploy
+    run: once          # optional: always (default) | once | changed
+  - path: "scripts/bootstrap.sh"
+    on: init
+    run: changed
 ```
 
-This file is automatically updated when you add new dotfiles using the `add` command. You can manually add scripts to the init property these scripts will be executed every time you run `dotx sync init`.
+This file is automatically updated when you add new dotfiles using the `add` command. You can define scripts as list entries with a path and an on event (one of: init, pull, deploy). Optionally set run to control execution frequency: always (default), once, or changed (runs when file content hash changes). Scripts fire on the corresponding commands: init for `dotx sync init`, pull for `dotx sync pull`, and deploy for `dotx deploy`. 
 
 ## How It Works
 
@@ -282,7 +289,7 @@ This file is automatically updated when you add new dotfiles using the `add` com
 │   └── nvim/                  # Directories are preserved
 │       ├── init.vim
 │       └── ...
-│   setup.sh                   # Scripts that runs everytime you execute `dotx sync init`
+│   setup.sh                   # Example script referenced by scripts entries
 ├── scripts/
 │   └── bootstrap.sh           
 └── dotx.yaml                  # Repository configuration file
@@ -296,26 +303,33 @@ This file is automatically updated when you add new dotfiles using the `add` com
 
 ### Scripting (Hooks)
 
-dotx allows you to automate custom setup steps by defining scripts (also known as hooks) in your repository configuration file (`dotx.yaml`). These scripts are especially useful for tasks such as installing dependencies, setting up environments, or running any initialization logic after cloning or updating your dotfiles.
+dotx allows you to automate custom setup steps by defining scripts (also known as hooks) in your repository configuration file (`dotx.yaml`). These scripts are especially useful for tasks such as installing dependencies, setting up environments, or running any initialization logic.
 
-#### Init Scripts
+#### Script events and run conditions
 
-You can specify scripts to be executed automatically every time you run `dotx sync init`. To do this, add them under the `scripts.init` property in your `dotx.yaml` file:
+Define scripts under `scripts` as a list of entries with a path, an `on` event, and an optional `run` condition:
 
 ```yaml
 scripts:
-  init:
-    - setup.sh
-    - scripts/bootstrap.sh
+  - path: "scripts/bootstrap.sh"
+    on: init
+    run: once
+  - path: "scripts/post-pull.sh"
+    on: pull
+  - path: "scripts/post-deploy.sh"
+    on: deploy
 ```
 
-When you run:
+- `on` controls when the script runs. Allowed values: `init`, `pull`, `deploy`.
+- `run` controls how often the script runs:
+  - `always` (default): run every time the event occurs
+  - `once`: run only once ever
+  - `changed`: run only if the file's content hash has changed since the last run
 
-```bash
-dotx sync init
-```
-
-dotx will execute each script listed in the `init` section, in the order they appear. This allows you to automate any setup or bootstrapping tasks required for your environment.
+Execution:
+- `dotx sync init` triggers scripts with `on: init` (after cloning and setup)
+- `dotx sync pull` triggers scripts with `on: pull` (after pulling updates)
+- `dotx deploy` triggers scripts with `on: deploy` (after deployment)
 
 ##### Example use cases
 

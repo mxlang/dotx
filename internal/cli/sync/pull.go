@@ -1,8 +1,7 @@
-package cli
+package sync
 
 import (
-	"github.com/mxlang/dotx/internal/config"
-	"github.com/mxlang/dotx/internal/git"
+	"github.com/mxlang/dotx/internal/core"
 	"github.com/mxlang/dotx/internal/logger"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +11,7 @@ type pullOptions struct {
 	force  bool
 }
 
-func newCmdPull(cfg *config.Config) *cobra.Command {
+func newCmdPull(app core.App) *cobra.Command {
 	opts := pullOptions{}
 
 	pullCmd := &cobra.Command{
@@ -26,26 +25,14 @@ func newCmdPull(cfg *config.Config) *cobra.Command {
 		Args: cobra.NoArgs,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			runPull(cfg, opts)
+			if err := app.Pull(opts.deploy, opts.force); err != nil {
+				logger.Error("failed to pull dotfiles", "error", err)
+			}
 		},
 	}
 
-	pullCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", cfg.App.DeployOnPull, "automatically deploy dotfiles")
+	pullCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", app.Config.DeployOnPull, "automatically deploy dotfiles")
 	pullCmd.PersistentFlags().BoolVarP(&opts.force, "force", "f", false, "never prompt for overwriting")
 
 	return pullCmd
-}
-
-func runPull(cfg *config.Config, opts pullOptions) {
-	logger.Debug("pull changes from remote dotfiles")
-	if err := git.Pull(cfg.RepoPath); err != nil {
-		logger.Error("failed to pull remote dotfiles", "error", err)
-	}
-
-	logger.Info("successfully pulled from remote dotfiles")
-
-	if opts.deploy {
-		logger.Debug("automatic deploy is active")
-		runDeploy(cfg, opts.force)
-	}
 }

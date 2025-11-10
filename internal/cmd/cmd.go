@@ -1,12 +1,12 @@
-package script
+package cmd
 
 import (
 	"os"
 	"os/exec"
 )
 
-func Run(scriptPath string) error {
-	cmd := exec.Command("bash", scriptPath)
+func Run(command string, args ...string) error {
+	cmd := exec.Command(command, args...)
 
 	cmd.Stdin = os.Stdin   // pass input from terminal/user
 	cmd.Stdout = os.Stdout // print output to terminal

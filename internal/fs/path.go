@@ -2,7 +2,7 @@ package fs
 
 import (
 	"errors"
-	"io/fs"
+	iofs "io/fs"
 	"os"
 	"path/filepath"
 )
@@ -11,16 +11,15 @@ type Path struct {
 	absPath string
 }
 
-func NewPath(path string) Path {
+func NewPath(path ...string) Path {
 	return Path{
-		absPath: normalizePath(path),
+		absPath: expandPath(filepath.Join(path...)),
 	}
 }
 
 func (p Path) Filename() string {
-	if p.Exists() {
-		fileInfo, _ := os.Stat(p.absPath)
-		return fileInfo.Name()
+	if info, err := os.Stat(p.absPath); err == nil {
+		return info.Name()
 	}
 
 	return filepath.Base(p.absPath)
@@ -40,54 +39,49 @@ func (p Path) Dir() string {
 
 func (p Path) Exists() bool {
 	_, err := os.Stat(p.absPath)
-	return err == nil || !errors.Is(err, fs.ErrNotExist)
+	return err == nil || !errors.Is(err, iofs.ErrNotExist)
 }
 
 func (p Path) IsDir() bool {
-	if p.Exists() {
-		fileInfo, _ := os.Stat(p.absPath)
-		return fileInfo.IsDir()
-	}
-
-	return false
-}
-
-func (p Path) IsSymlink() bool {
-	symlinkInfo, err := os.Lstat(p.absPath)
-	if err != nil && os.IsNotExist(err) {
-		return false
-	}
-
-	if symlinkInfo.Mode()&os.ModeSymlink == os.ModeSymlink {
-		return true
-	}
-
-	return false
-}
-
-func (p Path) SymlinkPath() string {
-	if p.IsSymlink() {
-		symlink, _ := filepath.EvalSymlinks(p.absPath)
-		return symlink
-	}
-
-	return ""
-}
-
-func (p Path) HasSubfiles() bool {
-	if !p.IsDir() {
-		return false
-	}
-
-	files, err := os.ReadDir(p.absPath)
+	info, err := os.Stat(p.absPath)
 	if err != nil {
 		return false
 	}
 
-	return len(files) > 0
+	return info.IsDir()
 }
 
-func normalizePath(path string) string {
+func (p Path) IsSymlink() bool {
+	info, err := os.Lstat(p.absPath)
+	if err != nil {
+		return false
+	}
+
+	return info.Mode()&os.ModeSymlink == os.ModeSymlink
+}
+
+func (p Path) SymlinkPath() string {
+	if !p.IsSymlink() {
+		return ""
+	}
+	symlink, err := filepath.EvalSymlinks(p.absPath)
+	if err != nil {
+		return ""
+	}
+
+	return symlink
+}
+
+func (p Path) Join(path ...string) Path {
+	combinedPath := filepath.Join(append([]string{p.absPath}, path...)...)
+	return NewPath(combinedPath)
+}
+
+func (p Path) String() string {
+	return p.absPath
+}
+
+func expandPath(path string) string {
 	// Expand all environment variables in the path
 	path = os.ExpandEnv(path)
 

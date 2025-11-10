@@ -15,12 +15,8 @@ install:
 test:
 	@go test ./...
 
-cover:
-	@go test -cover ./...
-
 tidy:
 	@go mod tidy
 
-update-deps:
+update-deps: && tidy
 	@go get -u ./...
-	@go mod tidy

@@ -6,173 +6,354 @@ import (
 	"testing"
 )
 
-func TestFilename(t *testing.T) {
-	var tests = []struct {
-		test string
-		path string
-		name string
+func createFile(t *testing.T, dir string, name string) string {
+	t.Helper()
+	path := filepath.Join(dir, name)
+	if err := os.WriteFile(path, []byte(""), 0644); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
+
+func createSymlink(t *testing.T, source string, dest string) string {
+	t.Helper()
+	if err := os.Symlink(source, dest); err != nil {
+		t.Fatal(err)
+	}
+	return dest
+}
+
+func TestPath_Filename(t *testing.T) {
+	tempDir := t.TempDir()
+
+	tests := []struct {
+		name     string
+		path     string
+		expected string
 	}{
-		{"filename .bashrc", filepath.Join("testdata", ".bashrc"), ".bashrc"},
-		{"filename .zshrc but file not exists", filepath.Join("testdata", ".zshrc"), ".zshrc"},
-		{"dirname testdata", "testdata", "testdata"},
-		{"dirname test but dir not exists", "test", "test"},
+		{
+			name:     "get filename from file",
+			path:     createFile(t, tempDir, ".bashrc"),
+			expected: ".bashrc",
+		},
+		{
+			name:     "get filename from non existing file",
+			path:     filepath.Join(tempDir, ".zshrc"),
+			expected: ".zshrc",
+		},
+		{
+			name:     "get filename from directory",
+			path:     tempDir,
+			expected: filepath.Base(tempDir),
+		},
+		{
+			name:     "get filename from non existing directory",
+			path:     filepath.Join(tempDir, "config"),
+			expected: "config",
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
-			path := NewPath(tt.path)
-			filename := path.Filename()
-			if filename != tt.name {
-				t.Errorf("got %s, want %s", filename, tt.name)
+		t.Run(tt.name, func(t *testing.T) {
+			file := NewPath(tt.path)
+			got := file.Filename()
+			if tt.expected != got {
+				t.Errorf("expected %q, got %q", tt.expected, got)
 			}
 		})
 	}
 }
 
-func TestAbsPath(t *testing.T) {
-	wd, _ := os.Getwd()
+func TestPath_AbsPath(t *testing.T) {
+	tempDir := t.TempDir()
 
-	var tests = []struct {
-		test    string
-		path    string
-		absPath string
+	tests := []struct {
+		name     string
+		path     string
+		expected string
 	}{
-		{"file abs path exists", filepath.Join("testdata", ".bashrc"), filepath.Join(wd, "testdata", ".bashrc")},
-		{"file abs path not exists", filepath.Join("testdata", ".zshrc"), filepath.Join(wd, "testdata", ".zshrc")},
-		{"dir abs path exists", "testdata", filepath.Join(wd, "testdata")},
-		{"dir abs path not exists", "test", filepath.Join(wd, "test")},
+		{
+			name:     "get absolute path from file",
+			path:     createFile(t, tempDir, ".bashrc"),
+			expected: filepath.Join(tempDir, ".bashrc"),
+		},
+		{
+			name:     "get absolute path from non existing file",
+			path:     filepath.Join(tempDir, ".zshrc"),
+			expected: filepath.Join(tempDir, ".zshrc"),
+		},
+		{
+			name:     "get absolute path from directory",
+			path:     tempDir,
+			expected: tempDir,
+		},
+		{
+			name:     "get absolute path from non existing directory",
+			path:     filepath.Join(tempDir, "config"),
+			expected: filepath.Join(tempDir, "config"),
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
-			path := NewPath(tt.path)
-			absPath := path.AbsPath()
-			if absPath != tt.absPath {
-				t.Errorf("got %s, want %s", absPath, tt.absPath)
+		t.Run(tt.name, func(t *testing.T) {
+			file := NewPath(tt.path)
+			got := file.AbsPath()
+			if tt.expected != got {
+				t.Errorf("expected %q, got %q", tt.expected, got)
 			}
 		})
 	}
 }
 
-func TestDir(t *testing.T) {
-	wd, _ := os.Getwd()
+func TestPath_Dir(t *testing.T) {
+	tempDir := t.TempDir()
 
-	var tests = []struct {
-		test string
-		path string
-		dir  string
+	tests := []struct {
+		name     string
+		path     string
+		expected string
 	}{
-		{"file path exists", filepath.Join("testdata", ".bashrc"), filepath.Join(wd, "testdata")},
-		{"file path not exists", filepath.Join("testdata", ".zshrc"), filepath.Join(wd, "testdata")},
-		{"dir path exists", filepath.Join("testdata"), filepath.Join(wd, "testdata")},
-		{"dir path not exists", filepath.Join("test"), wd},
+		{
+			name:     "get dir from file",
+			path:     createFile(t, tempDir, ".bashrc"),
+			expected: tempDir,
+		},
+		{
+			name:     "get dir from non existing file",
+			path:     filepath.Join(tempDir, ".zshrc"),
+			expected: tempDir,
+		},
+		{
+			name:     "get dir from directory",
+			path:     tempDir,
+			expected: tempDir,
+		},
+		{
+			name:     "get dir from non existing directory",
+			path:     filepath.Join(tempDir, "config"),
+			expected: tempDir,
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
-			path := NewPath(tt.path)
-			dir := path.Dir()
-			if dir != tt.dir {
-				t.Errorf("got %s, want %s", dir, tt.dir)
+		t.Run(tt.name, func(t *testing.T) {
+			file := NewPath(tt.path)
+			got := file.Dir()
+			if tt.expected != got {
+				t.Errorf("expected %q, got %q", tt.expected, got)
 			}
 		})
 	}
 }
 
-func TestExists(t *testing.T) {
-	wd, _ := os.Getwd()
+func TestPath_Exists(t *testing.T) {
+	tempDir := t.TempDir()
 
-	var tests = []struct {
-		test        string
-		path        string
-		shouldExist bool
+	tests := []struct {
+		name     string
+		path     string
+		expected bool
 	}{
-		{"file relative exists", filepath.Join("testdata", ".bashrc"), true},
-		{"file relative not exists", filepath.Join("testdata", ".zshrc"), false},
-		{"file absoulte exists", filepath.Join(wd, "testdata", ".bashrc"), true},
-		{"file absoulte not exists", filepath.Join(wd, "testdata", ".zshrc"), false},
-		{"dir relative exists", "testdata", true},
-		{"dir relative not exists", "test", false},
-		{"dir absolute exists", filepath.Join(wd, "testdata"), true},
-		{"dir absolute not exists", filepath.Join(wd, "test"), false},
-		{"file with $HOME", filepath.Join("$HOME", "test"), false},
+		{
+			name:     "existing file",
+			path:     createFile(t, tempDir, ".bashrc"),
+			expected: true,
+		},
+		{
+			name:     "non existing file",
+			path:     filepath.Join(tempDir, ".zshrc"),
+			expected: false,
+		},
+		{
+			name:     "existing directory",
+			path:     tempDir,
+			expected: true,
+		},
+		{
+			name:     "non existing directory",
+			path:     filepath.Join(tempDir, "config"),
+			expected: false,
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			path := NewPath(tt.path)
-			exists := path.Exists()
-			if exists != tt.shouldExist {
-				t.Errorf("got %t, want %t", exists, tt.shouldExist)
+			got := path.Exists()
+			if tt.expected != got {
+				t.Errorf("expected %v, got %v", tt.expected, got)
 			}
 		})
 	}
 }
 
-func TestIsDir(t *testing.T) {
-	var tests = []struct {
-		test  string
-		path  string
-		isDir bool
+func TestPath_IsDir(t *testing.T) {
+	tempDir := t.TempDir()
+
+	tests := []struct {
+		name     string
+		path     string
+		expected bool
 	}{
-		{"dir exists", "testdata", true},
-		{"dir not exists", "test", false},
-		{"check existing file", filepath.Join("testdata", ".bashrc"), false},
-		{"check not existing file", filepath.Join("testdata", ".zshrc"), false},
+		{
+			name:     "is a directory",
+			path:     tempDir,
+			expected: true,
+		},
+		{
+			name:     "is not a directory",
+			path:     createFile(t, tempDir, ".bashrc"),
+			expected: false,
+		},
+		{
+			name:     "non existing directory",
+			path:     filepath.Join(tempDir, "config"),
+			expected: false,
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			path := NewPath(tt.path)
-			isDir := path.IsDir()
-			if isDir != tt.isDir {
-				t.Errorf("got %t, want %t", isDir, tt.isDir)
+			got := path.IsDir()
+			if tt.expected != got {
+				t.Errorf("expected %v, got %v", tt.expected, got)
 			}
 		})
 	}
 }
 
-func TestIsSymlink(t *testing.T) {
-	var tests = []struct {
-		test      string
-		path      string
-		isSymlink bool
+func TestPath_IsSymlink(t *testing.T) {
+	tempDir := t.TempDir()
+
+	tests := []struct {
+		name     string
+		path     string
+		expected bool
 	}{
-		{"existing symlink", filepath.Join("testdata", "symlink"), true},
-		{"no symlink", filepath.Join("testdata", ".bashrc"), false},
-		{"removed symlink source", filepath.Join("testdata", "symlink_removed"), true},
+		{
+			name:     "is a symlink to file",
+			path:     createSymlink(t, createFile(t, tempDir, ".bashrc"), filepath.Join(tempDir, ".bashrc_sym")),
+			expected: true,
+		},
+		{
+			name:     "is a symlink to directory",
+			path:     createSymlink(t, tempDir, filepath.Join(tempDir, "config")),
+			expected: true,
+		},
+		{
+			name:     "is not a symlink (regular file)",
+			path:     createFile(t, tempDir, ".bashrc"),
+			expected: false,
+		},
+		{
+			name:     "is not a symlink (directory)",
+			path:     tempDir,
+			expected: false,
+		},
+		{
+			name:     "non existing path",
+			path:     filepath.Join(tempDir, "nonexistent"),
+			expected: false,
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			path := NewPath(tt.path)
-			isSymlink := path.IsSymlink()
-			if isSymlink != tt.isSymlink {
-				t.Errorf("got %t, want %t", isSymlink, tt.isSymlink)
+			got := path.IsSymlink()
+			if tt.expected != got {
+				t.Errorf("expected %v, got %v", tt.expected, got)
 			}
 		})
 	}
 }
 
-func TestSymlinkPath(t *testing.T) {
-	wd, _ := os.Getwd()
+func TestPath_SymlinkPath(t *testing.T) {
+	tempDir := t.TempDir()
 
-	var tests = []struct {
-		test        string
-		path        string
-		symlinkPath string
+	targetFile := createFile(t, tempDir, ".bashrc")
+	symlinkFile := createSymlink(t, targetFile, filepath.Join(tempDir, ".bashrc_sym"))
+
+	tests := []struct {
+		name     string
+		path     string
+		expected string
 	}{
-		{"existing symlink", filepath.Join("testdata", "symlink"), filepath.Join(wd, "testdata", ".bashrc")},
-		{"no symlink", filepath.Join("testdata", ".bashrc"), ""},
-		{"removed symlink source", filepath.Join("testdata", "symlink_removed"), ""},
+		{
+			name:     "get symlink target path",
+			path:     symlinkFile,
+			expected: targetFile,
+		},
+		{
+			name:     "not a symlink returns empty string",
+			path:     targetFile,
+			expected: "",
+		},
+		{
+			name:     "directory is not a symlink",
+			path:     tempDir,
+			expected: "",
+		},
+		{
+			name:     "non existing path returns empty string",
+			path:     filepath.Join(tempDir, "nonexistent"),
+			expected: "",
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			path := NewPath(tt.path)
-			symlinkPath := path.SymlinkPath()
-			if symlinkPath != tt.symlinkPath {
-				t.Errorf("got %s, want %s", symlinkPath, tt.symlinkPath)
+			got := path.SymlinkPath()
+			if tt.expected != got {
+				t.Errorf("expected %q, got %q", tt.expected, got)
+			}
+		})
+	}
+}
+
+func TestPath_Join(t *testing.T) {
+	tempDir := t.TempDir()
+
+	tests := []struct {
+		name     string
+		basePath string
+		paths    []string
+		expected string
+	}{
+		{
+			name:     "join single path",
+			basePath: tempDir,
+			paths:    []string{"config"},
+			expected: filepath.Join(tempDir, "config"),
+		},
+		{
+			name:     "join multiple paths",
+			basePath: tempDir,
+			paths:    []string{"config", "app", "settings.json"},
+			expected: filepath.Join(tempDir, "config", "app", "settings.json"),
+		},
+		{
+			name:     "join with empty paths",
+			basePath: tempDir,
+			paths:    []string{},
+			expected: tempDir,
+		},
+		{
+			name:     "join with dot paths",
+			basePath: tempDir,
+			paths:    []string{".", "config", "..", "other"},
+			expected: filepath.Join(tempDir, "other"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := NewPath(tt.basePath)
+			got := path.Join(tt.paths...).AbsPath()
+			if tt.expected != got {
+				t.Errorf("expected %q, got %q", tt.expected, got)
 			}
 		})
 	}

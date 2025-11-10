@@ -2,14 +2,16 @@ package git
 
 import (
 	"errors"
-	"github.com/go-git/go-git/v6/plumbing"
+
+	"github.com/mxlang/dotx/internal/fs"
+
 	"strings"
 
 	"github.com/go-git/go-git/v6"
 	"github.com/go-git/go-git/v6/plumbing/transport/ssh"
 )
 
-func Clone(repoDir string, url string) error {
+func Clone(repoDir fs.Path, url string) error {
 	gitOpts := &git.CloneOptions{
 		URL: url,
 	}
@@ -23,7 +25,7 @@ func Clone(repoDir string, url string) error {
 		gitOpts.Auth = authMethod
 	}
 
-	_, err := git.PlainClone(repoDir, gitOpts)
+	_, err := git.PlainClone(repoDir.AbsPath(), gitOpts)
 	if err != nil {
 		return err
 	}
@@ -31,8 +33,8 @@ func Clone(repoDir string, url string) error {
 	return nil
 }
 
-func Pull(repoDir string) error {
-	repo, err := git.PlainOpen(repoDir)
+func Pull(repoDir fs.Path) error {
+	repo, err := git.PlainOpen(repoDir.AbsPath())
 	if err != nil {
 		return err
 	}
@@ -53,8 +55,8 @@ func Pull(repoDir string) error {
 	return nil
 }
 
-func Add(repoDir string, path string) error {
-	repo, err := git.PlainOpen(repoDir)
+func Add(repoDir fs.Path, path string) error {
+	repo, err := git.PlainOpen(repoDir.AbsPath())
 	if err != nil {
 		return err
 	}
@@ -72,8 +74,8 @@ func Add(repoDir string, path string) error {
 	return nil
 }
 
-func Commit(repoDir string, message string) error {
-	repo, err := git.PlainOpen(repoDir)
+func Commit(repoDir fs.Path, message string) error {
+	repo, err := git.PlainOpen(repoDir.AbsPath())
 	if err != nil {
 		return err
 	}
@@ -91,8 +93,8 @@ func Commit(repoDir string, message string) error {
 	return nil
 }
 
-func Push(repoDir string) error {
-	repo, err := git.PlainOpen(repoDir)
+func Push(repoDir fs.Path) error {
+	repo, err := git.PlainOpen(repoDir.AbsPath())
 	if err != nil {
 		return err
 	}
@@ -104,8 +106,8 @@ func Push(repoDir string) error {
 	return nil
 }
 
-func Remote(repoDir string) ([]string, error) {
-	repo, err := git.PlainOpen(repoDir)
+func Remote(repoDir fs.Path) ([]string, error) {
+	repo, err := git.PlainOpen(repoDir.AbsPath())
 	if err != nil {
 		return nil, err
 	}
@@ -116,43 +118,4 @@ func Remote(repoDir string) ([]string, error) {
 	}
 
 	return remote.Config().URLs, nil
-}
-
-func IsBehindRemote(repoDir string) (bool, error) {
-	repo, err := git.PlainOpen(repoDir)
-	if err != nil {
-		return false, err
-	}
-
-	err = repo.Fetch(&git.FetchOptions{RemoteName: "origin", Progress: nil, Tags: git.NoTags})
-	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
-		return false, err
-	}
-
-	headRef, err := repo.Head()
-	if err != nil {
-		return false, err
-	}
-
-	remoteRef, err := repo.Reference(plumbing.NewRemoteReferenceName("origin", headRef.Name().Short()), true)
-	if err != nil {
-		return false, err
-	}
-
-	headCommit, err := repo.CommitObject(headRef.Hash())
-	if err != nil {
-		return false, err
-	}
-
-	remoteCommit, err := repo.CommitObject(remoteRef.Hash())
-	if err != nil {
-		return false, err
-	}
-
-	isAncestor, err := headCommit.IsAncestor(remoteCommit)
-	if err != nil {
-		return false, err
-	}
-
-	return isAncestor, nil
 }
