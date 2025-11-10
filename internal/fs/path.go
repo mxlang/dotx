@@ -2,7 +2,7 @@ package fs
 
 import (
 	"errors"
-	"io/fs"
+	iofs "io/fs"
 	"os"
 	"path/filepath"
 )
@@ -18,9 +18,8 @@ func NewPath(path ...string) Path {
 }
 
 func (p Path) Filename() string {
-	if p.Exists() {
-		fileInfo, _ := os.Stat(p.absPath)
-		return fileInfo.Name()
+	if info, err := os.Stat(p.absPath); err == nil {
+		return info.Name()
 	}
 
 	return filepath.Base(p.absPath)
@@ -40,38 +39,37 @@ func (p Path) Dir() string {
 
 func (p Path) Exists() bool {
 	_, err := os.Stat(p.absPath)
-	return err == nil || !errors.Is(err, fs.ErrNotExist)
+	return err == nil || !errors.Is(err, iofs.ErrNotExist)
 }
 
 func (p Path) IsDir() bool {
-	if p.Exists() {
-		fileInfo, _ := os.Stat(p.absPath)
-		return fileInfo.IsDir()
-	}
-
-	return false
-}
-
-func (p Path) IsSymlink() bool {
-	symlinkInfo, err := os.Lstat(p.absPath)
-	if err != nil && os.IsNotExist(err) {
+	info, err := os.Stat(p.absPath)
+	if err != nil {
 		return false
 	}
 
-	if symlinkInfo.Mode()&os.ModeSymlink == os.ModeSymlink {
-		return true
+	return info.IsDir()
+}
+
+func (p Path) IsSymlink() bool {
+	info, err := os.Lstat(p.absPath)
+	if err != nil {
+		return false
 	}
 
-	return false
+	return info.Mode()&os.ModeSymlink == os.ModeSymlink
 }
 
 func (p Path) SymlinkPath() string {
-	if p.IsSymlink() {
-		symlink, _ := filepath.EvalSymlinks(p.absPath)
-		return symlink
+	if !p.IsSymlink() {
+		return ""
+	}
+	symlink, err := filepath.EvalSymlinks(p.absPath)
+	if err != nil {
+		return ""
 	}
 
-	return ""
+	return symlink
 }
 
 func (p Path) Join(path ...string) Path {

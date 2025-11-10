@@ -60,7 +60,6 @@ type script struct {
 	Event        event        `yaml:"on"`
 	RunCondition runCondition `yaml:"run,omitempty"`
 	// TODO maybe add before and after hook
-	// TODO special handling for init it can only run once so the condition is not needed
 }
 
 func (s *script) UnmarshalYAML(unmarshal func(any) error) error {
@@ -72,6 +71,15 @@ func (s *script) UnmarshalYAML(unmarshal func(any) error) error {
 
 	if err := unmarshal(&temp); err != nil {
 		return err
+	}
+
+	if temp.Event == OnInit {
+		if temp.RunCondition != "" {
+			return fmt.Errorf("run property is not allowed for on init scripts")
+		}
+		s.Path = repoDirPath().Join(temp.Path)
+		s.Event = temp.Event
+		return nil
 	}
 
 	if temp.RunCondition == "" {
@@ -97,7 +105,8 @@ func (s script) MarshalYAML() (any, error) {
 		Event: s.Event,
 	}
 
-	if s.RunCondition != "" && s.RunCondition != runAlways {
+	// For init scripts, never marshal `run` because it's implicitly `once` and not configurable
+	if s.Event != OnInit && s.RunCondition != "" && s.RunCondition != runAlways {
 		out.RunCondition = s.RunCondition
 	}
 

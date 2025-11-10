@@ -17,15 +17,14 @@ type AppConfig struct {
 
 func LoadAppConfig() AppConfig {
 	// Ensure the config directory exists
-	appDir := fs.NewPath(appDirPath())
-	if err := fs.Mkdir(appDir); err != nil {
+	if err := fs.Mkdir(appDirPath()); err != nil {
 		logger.Error("error while creating dotx config directory", "error", err)
 	}
 
 	config := defaultAppConfig()
 	path := appConfigFilePath()
 
-	content, err := os.ReadFile(path)
+	content, err := os.ReadFile(path.AbsPath())
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
 			logger.Error("error while reading dotx config", "error", err)
