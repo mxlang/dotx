@@ -9,10 +9,9 @@ import (
 var version = "dev"
 
 func main() {
-	conf := config.LoadAppConfig()
 	repo := config.LoadRepoConfig()
 
-	app := core.NewApp(conf, repo)
+	app := core.NewApp(repo)
 
 	cli.Execute(app, version)
 }

@@ -35,7 +35,7 @@ func newCmdRoot(app core.App, version string) *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", app.Config.Verbose, "enable verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", verbose, "enable verbose output")
 
 	rootCmd.AddCommand(
 		newCmdInitShell(),

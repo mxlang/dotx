@@ -31,8 +31,8 @@ func newCmdPull(app core.App) *cobra.Command {
 		},
 	}
 
-	pullCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", app.Config.DeployOnPull, "automatically deploy dotfiles")
-	pullCmd.PersistentFlags().BoolVarP(&opts.force, "force", "f", false, "never prompt for overwriting")
+	pullCmd.PersistentFlags().BoolVarP(&opts.deploy, "deploy", "d", opts.deploy, "automatically deploy dotfiles")
+	pullCmd.PersistentFlags().BoolVarP(&opts.force, "force", "f", opts.force, "never prompt for overwriting")
 
 	return pullCmd
 }
