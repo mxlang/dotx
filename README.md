@@ -231,23 +231,7 @@ dotx sync push -m "Update bash aliases"
 
 ## Configuration
 
-dotx uses two configuration files that follow the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
-
-### Application Configuration
-
-Located at `$XDG_CONFIG_HOME/dotx/config.yaml` (typically `~/.config/dotx/config.yaml` on Linux and `~/Library/Application Support/dotx/config.yaml` on macOS):
-
-```yaml
-verbose: true                            # Enable verbose logging
-deployOnInit: true                       # Automatically deploy dotfiles after initialization
-deployOnPull: true                       # Automatically deploy dotfiles after pulling
-```
-
-You can create or edit this file manually to customize dotx's behavior. If the file doesn't exist, dotx will use default values.
-
-### Repository Configuration
-
-Located at `$XDG_DATA_HOME/dotx/dotfiles/dotx.yaml` (typically `~/.local/share/dotx/dotfiles/dotx.yaml` on Linux and `~/Library/Application Support/dotx/dotfiles/dotx.yaml` on macOS):
+dotx uses a configuration file that follows the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html). Located at `$XDG_DATA_HOME/dotx/dotfiles/dotx.yaml` (typically `~/.local/share/dotx/dotfiles/dotx.yaml` on Linux and `~/Library/Application Support/dotx/dotfiles/dotx.yaml` on macOS):
 
 ```yaml
 dotfiles:
@@ -257,14 +241,13 @@ dotfiles:
     destination: "$HOME/.config/nvim"
 scripts:
   - path: "setup.sh"
-    on: init           # one of: init, pull, deploy
-    run: once          # optional: always (default) | once | changed
+    on: init           # one of: init, pull, deploy — note: 'run' is not allowed for init scripts
   - path: "scripts/bootstrap.sh"
-    on: init
-    run: changed
+    on: pull
+    run: changed       # optional: always (default) | once | changed
 ```
 
-This file is automatically updated when you add new dotfiles using the `add` command. You can define scripts as list entries with a path and an on event (one of: init, pull, deploy). Optionally set run to control execution frequency: always (default), once, or changed (runs when file content hash changes). Scripts fire on the corresponding commands: init for `dotx sync init`, pull for `dotx sync pull`, and deploy for `dotx deploy`. 
+This file is automatically updated when you add new dotfiles using the `add` command. You can define scripts as list entries with a path and an `on` event (one of: `init`, `pull`, `deploy`). Optionally set `run` to control execution frequency: `always` (default), `once`, or `changed` (runs when the file content hash changes). Note: the `run` property is not allowed for scripts with `on: init`. Scripts fire on the corresponding commands: `init` for `dotx sync init`, `pull` for `dotx sync pull`, and `deploy` for `dotx deploy`.
 
 ## How It Works
 
@@ -307,13 +290,12 @@ dotx allows you to automate custom setup steps by defining scripts (also known a
 
 #### Script events and run conditions
 
-Define scripts under `scripts` as a list of entries with a path, an `on` event, and an optional `run` condition:
+Define scripts under `scripts` as a list of entries with a path, an `on` event, and an optional `run` condition (except for `on: init`, where `run` is not allowed):
 
 ```yaml
 scripts:
   - path: "scripts/bootstrap.sh"
     on: init
-    run: once
   - path: "scripts/post-pull.sh"
     on: pull
   - path: "scripts/post-deploy.sh"
@@ -321,7 +303,7 @@ scripts:
 ```
 
 - `on` controls when the script runs. Allowed values: `init`, `pull`, `deploy`.
-- `run` controls how often the script runs:
+- `run` controls how often the script runs (not supported for `on: init` scripts):
   - `always` (default): run every time the event occurs
   - `once`: run only once ever
   - `changed`: run only if the file's content hash has changed since the last run

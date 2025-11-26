@@ -10,7 +10,6 @@ var version = "dev"
 
 func main() {
 	repo := config.LoadRepoConfig()
-
 	app := core.NewApp(repo)
 
 	cli.Execute(app, version)
