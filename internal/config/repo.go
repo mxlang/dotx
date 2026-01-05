@@ -49,9 +49,7 @@ func LoadRepoConfig() RepoConfig {
 		logger.Error("error while creating dotfiles directory", "error", err)
 	}
 
-	config := RepoConfig{
-		Path: repoDirPath(),
-	}
+	config := RepoConfig{}
 	path := repoConfigFilePath().AbsPath()
 
 	content, err := os.ReadFile(path)
@@ -60,12 +58,16 @@ func LoadRepoConfig() RepoConfig {
 			logger.Error("error while reading dotfiles config", "error", err)
 		}
 
+		config.Path = repoDirPath()
 		return config
 	}
 
 	if err := yaml.Unmarshal(content, &config); err != nil {
 		logger.Error("invalid dotfiles config", "error", err)
 	}
+
+	// override with a default path
+	config.Path = repoDirPath()
 
 	return config
 }
